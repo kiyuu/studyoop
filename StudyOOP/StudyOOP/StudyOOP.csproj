@@ -1,0 +1,47 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;1705;SA1633;SA1309;SA1652</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="output\delete_Employee.TSV" />
+    <None Remove="output\delete_EmployeeAuthority.TSV" />
+    <None Remove="output\Employee.TSV" />
+    <None Remove="output\EmployeeAuthority.TSV" />
+    <None Remove="output\_output" />
+    <None Remove="output\delete_Employee.tsv" />
+    <None Remove="output\Employee.tsv" />
+    <None Remove="output\delete_EmployeeAuthority.tsv" />
+    <None Remove="output\delete_Item.tsv" />
+    <None Remove="output\EmployeeAuthority.tsv" />
+    <None Remove="output\Item.tsv" />
+    <None Remove="input\WXXX5555.dat" />
+    <None Remove="input\WXXX6666.dat" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="StyleCop.Analyzers" Version="1.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="input\WXXX5555.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="input\WXXX6666.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="output\_output">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="output\" />
+    <Folder Include="Common\" />
+  </ItemGroup>
+</Project>
