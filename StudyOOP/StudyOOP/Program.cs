@@ -6,8 +6,8 @@
     {
         public static void Main(string[] args)
         {
-            Converter.ConvertWXXX5555ToEmployeeTSV();
-            Converter.ConvertWXXX6666ToItemTSV();
+            Converter.ConvertFlatFileToTsv(FlatFileType.WXXX5555);
+            Converter.ConvertFlatFileToTsv(FlatFileType.WXXX6666);
         }
     }
 }

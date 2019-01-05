@@ -1,10 +1,17 @@
 ﻿namespace StudyOOP.Convert
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Text;
     using StudyOOP.Common;
+
+    public enum FlatFileType
+    {
+        WXXX5555,
+        WXXX6666
+    }
 
     public static class Converter
     {
@@ -28,7 +35,7 @@
 
         private static readonly int _itemBodyLineSize = 35;
 
-        public static void ConvertWXXX5555ToEmployeeTSV()
+        public static void ConvertFlatFileToTsv(FlatFileType flatFileType)
         {
             if (!Directory.Exists(Settings.InputDirectory))
             {
@@ -44,12 +51,7 @@
 
                 foreach (var filePath in Directory.EnumerateFiles(Settings.InputDirectory))
                 {
-                    if (!Path.GetExtension(filePath).Equals(Settings.InputFileExtension, StringComparison.OrdinalIgnoreCase))
-                    {
-                        continue;
-                    }
-
-                    if (!Path.GetFileNameWithoutExtension(filePath).Equals(_inputEmployeeFileName, StringComparison.OrdinalIgnoreCase))
+                    if (!IsFileNameValid(filePath, flatFileType))
                     {
                         continue;
                     }
@@ -57,58 +59,20 @@
                     var lines = File.ReadLines(filePath, _inputEncode);
 
                     var headerLine = lines.FirstOrDefault();
-                    if (headerLine == null)
+                    if (!IsHeaderValid(headerLine, flatFileType))
                     {
                         continue;
                     }
 
-                    if (!headerLine.Trim().Equals(_inputEmployeeFileName, StringComparison.OrdinalIgnoreCase))
+                    foreach (var bodyLine in lines.Skip(1))
                     {
-                        continue;
-                    }
-
-                    foreach (var line in lines.Skip(1))
-                    {
-                        // 全角文字ない前提
-                        if (line.Length != _employeeBodyLineSize)
+                        if (!IsBodyLineSizeValid(bodyLine, flatFileType))
                         {
                             continue;
                         }
 
-                        var index = 0;
-                        var length = 2;
-                        var functionType = line.Substring(index, length);
-                        index += length;
-
-                        length = 5;
-                        if (!int.TryParse(line.Substring(index, length), out int code))
-                        {
-                            continue;
-                        }
-
-                        index += length;
-
-                        length = 10;
-                        var name = line.Substring(index, length);
-                        index += length;
-
-                        length = 1;
-                        var authority = line.Substring(index, length);
-                        index += length;
-
-                        var employeeLine = string.Join(Settings.TsvSeparater, code.ToString().PadLeft(5, '0'), name.Trim()) + Environment.NewLine;
-                        var employeeAuthority = string.Join(Settings.TsvSeparater, code.ToString().PadLeft(5, '0'), authority) + Environment.NewLine;
-
-                        var outputEmployeeFileName = _outputEmployeeFileName + Settings.OutputFileExtension;
-                        var outputEmployeeAuthorityFileName = _outputEmployeeAuthorityFileName + Settings.OutputFileExtension;
-                        if (functionType != "10")
-                        {
-                            outputEmployeeFileName = _outputDeletePrefix + outputEmployeeFileName;
-                            outputEmployeeAuthorityFileName = _outputDeletePrefix + outputEmployeeAuthorityFileName;
-                        }
-
-                        File.AppendAllText(Path.Combine(Settings.OutputDirectory, outputEmployeeFileName), employeeLine, _outputEncode);
-                        File.AppendAllText(Path.Combine(Settings.OutputDirectory, outputEmployeeAuthorityFileName), employeeAuthority, _outputEncode);
+                        ConvertFlatLineToTsvs(bodyLine, flatFileType)
+                            .ForEach((p) => File.AppendAllText(Path.Combine(Settings.OutputDirectory, p.Key), p.Value, _outputEncode));
                     }
                 }
             }
@@ -118,94 +82,188 @@
             }
         }
 
-        public static void ConvertWXXX6666ToItemTSV()
+        private static bool IsFileNameValid(string filePath, FlatFileType flatFileType)
         {
-            if (!Directory.Exists(Settings.InputDirectory))
+            if (string.IsNullOrEmpty(filePath))
             {
-                return;
+                return false;
             }
 
-            try
+            if (!Path.GetExtension(filePath).Equals(Settings.InputFileExtension, StringComparison.OrdinalIgnoreCase))
             {
-                if (!Directory.Exists(Settings.OutputDirectory))
-                {
-                    Directory.CreateDirectory(Settings.OutputDirectory);
-                }
-
-                foreach (var filePath in Directory.EnumerateFiles(Settings.InputDirectory))
-                {
-                    if (!Path.GetExtension(filePath).Equals(Settings.InputFileExtension, StringComparison.OrdinalIgnoreCase))
-                    {
-                        continue;
-                    }
-
-                    if (!Path.GetFileNameWithoutExtension(filePath).Equals(_inputItemFileName, StringComparison.OrdinalIgnoreCase))
-                    {
-                        continue;
-                    }
-
-                    var lines = File.ReadLines(filePath, _inputEncode);
-
-                    var headerLine = lines.FirstOrDefault();
-                    if (headerLine == null)
-                    {
-                        continue;
-                    }
-
-                    if (!headerLine.Trim().Equals(_inputItemFileName, StringComparison.OrdinalIgnoreCase))
-                    {
-                        continue;
-                    }
-
-                    foreach (var line in lines.Skip(1))
-                    {
-                        // 全角文字ない前提
-                        if (line.Length != _itemBodyLineSize)
-                        {
-                            continue;
-                        }
-
-                        var index = 0;
-                        var length = 2;
-                        var functionType = line.Substring(index, length);
-                        index += length;
-
-                        length = 13;
-                        if (!long.TryParse(line.Substring(index, length), out long code))
-                        {
-                            continue;
-                        }
-
-                        index += length;
-
-                        length = 10;
-                        var name = line.Substring(index, length);
-                        index += length;
-
-                        length = 10;
-                        if (!decimal.TryParse(line.Substring(index, length), out decimal unitPrice))
-                        {
-                            continue;
-                        }
-
-                        index += length;
-
-                        var itemLine = string.Join(Settings.TsvSeparater, code.ToString().PadLeft(13, '0'), name.Trim(), unitPrice) + Environment.NewLine;
-
-                        var outputItemFileName = _outputItemFileName + Settings.OutputFileExtension;
-                        if (functionType != "10")
-                        {
-                            outputItemFileName = _outputDeletePrefix + outputItemFileName;
-                        }
-
-                        File.AppendAllText(Path.Combine(Settings.OutputDirectory, outputItemFileName), itemLine, _outputEncode);
-                    }
-                }
+                return false;
             }
-            catch (Exception ex)
+
+            if (!Path.GetFileNameWithoutExtension(filePath).Equals(GetInputFileName(flatFileType), StringComparison.OrdinalIgnoreCase))
             {
-                Console.WriteLine(ex.ToString());
+                return false;
             }
+
+            return true;
+        }
+
+        private static bool IsHeaderValid(string headerLine, FlatFileType flatFileType)
+        {
+            if (string.IsNullOrEmpty(headerLine))
+            {
+                return false;
+            }
+
+            if (!headerLine.Trim().Equals(GetInputFileName(flatFileType), StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private static bool IsBodyLineSizeValid(string bodyLine, FlatFileType flatFileType)
+        {
+            if (string.IsNullOrEmpty(bodyLine))
+            {
+                return false;
+            }
+
+            // 全角文字ない前提
+            if (bodyLine.Length != GetBodyLineSize(flatFileType))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private static string GetInputFileName(FlatFileType flatFileType)
+        {
+            var result = string.Empty;
+
+            switch (flatFileType)
+            {
+                case FlatFileType.WXXX5555:
+                    result = _inputEmployeeFileName;
+                    break;
+                case FlatFileType.WXXX6666:
+                    result = _inputItemFileName;
+                    break;
+                default:
+                    throw new Exception($"argument error");
+            }
+
+            return result;
+        }
+
+        private static int GetBodyLineSize(FlatFileType flatFileType)
+        {
+            var result = 0;
+
+            switch (flatFileType)
+            {
+                case FlatFileType.WXXX5555:
+                    result = _employeeBodyLineSize;
+                    break;
+                case FlatFileType.WXXX6666:
+                    result = _itemBodyLineSize;
+                    break;
+                default:
+                    throw new Exception($"argument error");
+            }
+
+            return result;
+        }
+
+        private static List<KeyValuePair<string, string>> ConvertFlatLineToTsvs(string bodyLine, FlatFileType flatFileType)
+        {
+            var result = new List<KeyValuePair<string, string>>();
+            switch (flatFileType)
+            {
+                case FlatFileType.WXXX5555:
+                    result.AddRange(ConvertWXXX5555ToEmployeeTSV(bodyLine));
+                    break;
+
+                case FlatFileType.WXXX6666:
+                    result.AddRange(ConvertWXXX6666ToItemTSV(bodyLine));
+                    break;
+                default:
+                    throw new Exception($"argument error");
+            }
+
+            return result;
+        }
+
+        private static List<KeyValuePair<string, string>> ConvertWXXX5555ToEmployeeTSV(string bodyLine)
+        {
+            var result = new List<KeyValuePair<string, string>>();
+            var index = 0;
+            var length = 2;
+            var functionType = bodyLine.Substring(index, length);
+            index += length;
+
+            length = 5;
+            if (!int.TryParse(bodyLine.Substring(index, length), out int code))
+            {
+                return result;
+            }
+
+            index += length;
+
+            length = 10;
+            var name = bodyLine.Substring(index, length);
+            index += length;
+
+            length = 1;
+            var authority = bodyLine.Substring(index, length);
+            index += length;
+
+            var employeeLine = string.Join(Settings.TsvSeparater, code.ToString().PadLeft(5, '0'), name.Trim()) + Environment.NewLine;
+            var employeeAuthorityLine = string.Join(Settings.TsvSeparater, code.ToString().PadLeft(5, '0'), authority) + Environment.NewLine;
+
+            result.Add(new KeyValuePair<string, string>(MakeOutputFileName(functionType, _outputEmployeeFileName), employeeLine));
+            result.Add(new KeyValuePair<string, string>(MakeOutputFileName(functionType, _outputEmployeeAuthorityFileName), employeeAuthorityLine));
+            return result;
+        }
+
+        private static List<KeyValuePair<string, string>> ConvertWXXX6666ToItemTSV(string bodyLine)
+        {
+            var result = new List<KeyValuePair<string, string>>();
+            var index = 0;
+            var length = 2;
+            var functionType = bodyLine.Substring(index, length);
+            index += length;
+
+            length = 13;
+            if (!long.TryParse(bodyLine.Substring(index, length), out long code))
+            {
+                return result;
+            }
+
+            index += length;
+
+            length = 10;
+            var name = bodyLine.Substring(index, length);
+            index += length;
+
+            length = 10;
+            if (!decimal.TryParse(bodyLine.Substring(index, length), out decimal unitPrice))
+            {
+                return result;
+            }
+
+            index += length;
+
+            var itemLine = string.Join(Settings.TsvSeparater, code.ToString().PadLeft(13, '0'), name.Trim(), unitPrice) + Environment.NewLine;
+            result.Add(new KeyValuePair<string, string>(MakeOutputFileName(functionType, _outputItemFileName), itemLine));
+            return result;
+        }
+
+        private static string MakeOutputFileName(string functionType, string fileNameWithoutExtension)
+        {
+            var result = fileNameWithoutExtension + Settings.OutputFileExtension;
+            if (functionType != "10")
+            {
+                result = _outputDeletePrefix + result;
+            }
+
+            return result;
         }
     }
 }
