@@ -1,13 +1,19 @@
 ﻿namespace StudyOOP
 {
+    using System.Collections.Generic;
     using StudyOOP.Convert;
 
     public class Program
     {
         public static void Main(string[] args)
         {
-            Converter.ConvertFlatFileToTsv(FlatFileType.WXXX5555);
-            Converter.ConvertFlatFileToTsv(FlatFileType.WXXX6666);
+            var converters = new List<FlatFileToTsvConverterBase>()
+                {
+                    new WXXX5555ToEmployeeTSVConverter(),
+                    new WXXX6666ToItemTSVConverter()
+                };
+
+            converters.ForEach(c => c.Execute());
         }
     }
 }
