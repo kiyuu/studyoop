@@ -6,8 +6,8 @@
     {
         public static void Main(string[] args)
         {
-            Converter.ConvertWXXX5555ToEmployeeTSV();
-            Converter.ConvertWXXX6666ToItemTSV();
+            Converter.ConvertDatFileToTSVFile((int)Converter.ConvertMode.ModeEmployee);
+            Converter.ConvertDatFileToTSVFile((int)Converter.ConvertMode.ModeItem);
         }
     }
 }
