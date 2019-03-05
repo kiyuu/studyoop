@@ -7,8 +7,8 @@
     {
         public static void Main(string[] args)
         {
-            Converter.ConvertToTSV(Constants.FileTypeEmployee);
-            Converter.ConvertToTSV(Constants.FileTypeItem);
+            Converter.ConvertDatToTSV(FileType.FileTypeEmployee);
+            Converter.ConvertDatToTSV(FileType.FileTypeItem);
         }
     }
 }

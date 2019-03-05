@@ -29,7 +29,7 @@
 
         private static readonly int _itemBodyLineSize = 35;
 
-        public static void ConvertToTSV(int fileType)
+        public static void ConvertDatToTSV(FileType fileType)
         {
             if (!Directory.Exists(Settings.InputDirectory))
             {
@@ -52,12 +52,12 @@
 
                     var lines = File.ReadLines(filePath, _inputEncode);
 
-                    if (!IsHeaderLineValid(lines, Get_FileName(fileType)))
+                    if ((GetFileName(fileType) == string.Empty) || (!IsHeaderLineValid(lines, GetFileName(fileType))))
                     {
                         continue;
                     }
 
-                    AppendAllText_Main(lines, fileType);
+                    DoAppendAllText(lines, fileType);
                 }
             }
             catch (Exception ex)
@@ -66,31 +66,31 @@
             }
         }
 
-        private static string Get_FileName(int filetype)
+        private static string GetFileName(FileType fileType)
         {
             var returnFileName = string.Empty;
-            switch (filetype)
+            switch (fileType)
             {
-                case Constants.FileTypeEmployee:
-                    returnFileName = "WXXX5555";
+                case FileType.FileTypeEmployee:
+                    returnFileName = _inputEmployeeFileName;
                     break;
-                case Constants.FileTypeItem:
-                    returnFileName = "WXXX6666";
+                case FileType.FileTypeItem:
+                    returnFileName = _inputItemFileName;
                     break;
             }
 
             return returnFileName;
         }
 
-        private static int Get_BodyLineSize(int filetype)
+        private static int GetBodyLineSize(FileType fileType)
         {
             var returnLineSize = 0;
-            switch (filetype)
+            switch (fileType)
             {
-                case Constants.FileTypeEmployee:
+                case FileType.FileTypeEmployee:
                     returnLineSize = _employeeBodyLineSize;
                     break;
-                case Constants.FileTypeItem:
+                case FileType.FileTypeItem:
                     returnLineSize = _itemBodyLineSize;
                     break;
             }
@@ -98,42 +98,40 @@
             return returnLineSize;
         }
 
-        private static void AppendAllText_Main(IEnumerable<string> lines, int fileType)
+        private static void DoAppendAllText(IEnumerable<string> lines, FileType fileType)
         {
             foreach (var line in lines.Skip(1))
             {
                 // 全角文字ない前提
-                if (!IsLengthValid(line, Get_BodyLineSize(fileType)))
+                if ((GetBodyLineSize(fileType) == 0) || (!IsLengthValid(line, GetBodyLineSize(fileType))))
                 {
                     continue;
                 }
 
-                string functiontype = string.Empty;
-                var lineList = new List<string>();
-                var fileDictionary = new Dictionary<string, string>();
+                FileInformation fileInfo;
+                fileInfo.FileName = new List<string>();
+                fileInfo.Line = new List<string>();
 
-                if (!IsFileDetailValid(line, fileType, ref functiontype, lineList))
+                if (!IsFileDetailValid(line, fileType, fileInfo))
                 {
                     continue;
                 }
 
-                fileDictionary = CreateFileDictionary(Create_outputFileName_Main(fileType, functiontype), lineList);
-
-                foreach (KeyValuePair<string, string> kvp in fileDictionary)
+                for (int i = 0; i <= fileInfo.FileName.Count - 1; i++)
                 {
-                    File.AppendAllText(Path.Combine(Settings.OutputDirectory, kvp.Key), kvp.Value, _outputEncode);
+                    File.AppendAllText(Path.Combine(Settings.OutputDirectory, fileInfo.FileName[i]), fileInfo.Line[i], _outputEncode);
                 }
             }
         }
 
-        private static bool IsFileNameValid(string filePath, int fileType)
+        private static bool IsFileNameValid(string filePath, FileType fileType)
         {
             if (!IsExtensionValid(filePath))
             {
                 return false;
             }
 
-            if (!IsFileNameWithoutExtensionValid(filePath, Get_FileName(fileType)))
+            if ((GetFileName(fileType) == string.Empty) || (!IsFileNameWithoutExtensionValid(filePath, GetFileName(fileType))))
             {
                 return false;
             }
@@ -146,15 +144,15 @@
             return Path.GetExtension(filePath).Equals(Settings.InputFileExtension, StringComparison.OrdinalIgnoreCase);
         }
 
-        private static bool IsFileNameWithoutExtensionValid(string filePath, string ofilename)
+        private static bool IsFileNameWithoutExtensionValid(string filePath, string fileName)
         {
-            return Path.GetFileNameWithoutExtension(filePath).Equals(ofilename, StringComparison.OrdinalIgnoreCase);
+            return Path.GetFileNameWithoutExtension(filePath).Equals(fileName, StringComparison.OrdinalIgnoreCase);
         }
 
-        private static bool IsHeaderLineValid(IEnumerable<string> lines, string filename)
+        private static bool IsHeaderLineValid(IEnumerable<string> lines, string fileName)
         {
             var headerLine = lines.FirstOrDefault();
-            if (headerLine == null || !headerLine.Trim().Equals(filename, StringComparison.OrdinalIgnoreCase))
+            if (headerLine == null || !headerLine.Trim().Equals(fileName, StringComparison.OrdinalIgnoreCase))
             {
                 return false;
             }
@@ -164,86 +162,41 @@
 
         private static bool IsLengthValid(string line, int size)
         {
-            if (line.Length != size)
-            {
-                return false;
-            }
-
-            return true;
+            return line.Length == size;
         }
 
-        private static bool IsFileDetailValid(string line, int fileType, ref string functiontype, List<string> returnlineList)
+        private static bool IsFileDetailValid(string line, FileType fileType,  FileInformation fileInfo)
         {
-            var lineList = new List<string>();
-            int icode = 0;
-            long lcode = 0;
-            decimal unitPrice = 0;
-
             switch (fileType)
             {
-                case Constants.FileTypeEmployee:
-                    if (!IsFileDetailValid_Employee(line, lineList, ref functiontype, ref icode))
+                case FileType.FileTypeEmployee:
+                    if (!IsFileDetailValidEmployee(line,  fileInfo))
                     {
                         return false;
                     }
 
-                    returnlineList = EditLine_Employee(lineList, icode, returnlineList);
                     break;
-                case Constants.FileTypeItem:
-                     if (!IsFileDetailValid_Item(line, lineList, ref functiontype,  ref lcode, ref unitPrice))
+                case FileType.FileTypeItem:
+                    if (!IsFileDetailValidItem(line,  fileInfo))
                     {
                         return false;
                     }
 
-                    returnlineList = EditLine_Item(lineList, lcode, unitPrice, returnlineList);
                     break;
             }
 
                 return true;
         }
 
-        private static Dictionary<string, string> CreateFileDictionary(List<string> names, List<string> lines)
-        {
-            var fileDictionary = new Dictionary<string, string>();
-            for (int i = 0; i <= names.Count - 1; i++)
-            {
-                fileDictionary.Add(names[i], lines[i]);
-            }
-
-            return fileDictionary;
-        }
-
-        private static List<string> EditLine_Employee(List<string> names, int code, List<string> lines)
-        {
-            string returnLine = string.Empty;
-            foreach (var name in names)
-            {
-                lines.Add(string.Join(Settings.TsvSeparater, code.ToString().PadLeft(5, '0'), name.Trim()) + Environment.NewLine);
-            }
-
-            return lines;
-        }
-
-        private static List<string> EditLine_Item(List<string> names, long code, decimal unitPrice, List<string> lines)
-        {
-            string returnLine = string.Empty;
-            foreach (var name in names)
-            {
-                lines.Add(string.Join(Settings.TsvSeparater, code.ToString().PadLeft(13, '0'), name.Trim(), unitPrice) + Environment.NewLine);
-            }
-
-            return lines;
-        }
-
-        private static bool IsFileDetailValid_Employee(string line, List<string> names, ref string sfunctionType, ref int icode)
+        private static bool IsFileDetailValidEmployee(string line,   FileInformation fileInfo)
         {
             var index = 0;
             var length = 2;
-            sfunctionType = line.Substring(index, length);
+            var functionType = line.Substring(index, length);
             index += length;
 
             length = 5;
-                if (!int.TryParse(line.Substring(index, length), out icode))
+            if (!int.TryParse(line.Substring(index, length), out int code))
             {
                 return false;
             }
@@ -252,27 +205,44 @@
 
             length = 10;
             var name = line.Substring(index, length);
-            names.Add(name);
+
             index += length;
 
             length = 1;
             var authority = line.Substring(index, length);
-            names.Add(authority);
+
             index += length;
+
+            var employeeLine = string.Join(Settings.TsvSeparater, code.ToString().PadLeft(5, '0'), name.Trim()) + Environment.NewLine;
+            var employeeAuthority = string.Join(Settings.TsvSeparater, code.ToString().PadLeft(5, '0'), authority) + Environment.NewLine;
+
+            var outputEmployeeFileName = _outputEmployeeFileName + Settings.OutputFileExtension;
+            var outputEmployeeAuthorityFileName = _outputEmployeeAuthorityFileName + Settings.OutputFileExtension;
+
+            if (functionType != "10")
+            {
+                outputEmployeeFileName = _outputDeletePrefix + outputEmployeeFileName;
+                outputEmployeeAuthorityFileName = _outputDeletePrefix + outputEmployeeAuthorityFileName;
+            }
+
+            fileInfo.FileName.Insert(0, outputEmployeeFileName);
+            fileInfo.FileName.Insert(1, outputEmployeeAuthorityFileName);
+            fileInfo.Line.Insert(0, employeeLine);
+            fileInfo.Line.Insert(1, employeeAuthority);
 
             return true;
         }
 
-        private static bool IsFileDetailValid_Item(string line, List<string> names, ref string sfunctionType, ref long lcode, ref decimal dunitPrice)
+        private static bool IsFileDetailValidItem(string line, FileInformation fileInfo)
         {
             var index = 0;
             var length = 2;
-            sfunctionType = line.Substring(index, length);
+            var functionType = line.Substring(index, length);
             index += length;
 
             length = 13;
-                if (!long.TryParse(line.Substring(index, length), out lcode))
-                {
+            if (!long.TryParse(line.Substring(index, length), out long code))
+            {
                 return false;
             }
 
@@ -280,56 +250,27 @@
 
             length = 10;
             var name = line.Substring(index, length);
-            names.Add(name);
             index += length;
 
             length = 10;
-                if (!decimal.TryParse(line.Substring(index, length), out dunitPrice))
-                {
+            if (!decimal.TryParse(line.Substring(index, length), out decimal unitPrice))
+            {
                 return false;
             }
 
             index += length;
+            var itemLine = string.Join(Settings.TsvSeparater, code.ToString().PadLeft(13, '0'), name.Trim(), unitPrice) + Environment.NewLine;
+
+            var outputItemFileName = _outputItemFileName + Settings.OutputFileExtension;
+            if (functionType != "10")
+            {
+                outputItemFileName = _outputDeletePrefix + outputItemFileName;
+            }
+
+            fileInfo.FileName.Add(outputItemFileName);
+            fileInfo.Line.Add(itemLine);
 
             return true;
-        }
-
-     private static List<string> Create_outputFileName_Main(int fileType, string functionType)
-        {
-            var fileNameList = GetoutputFileName(fileType);
-
-            var return_fileNameList = new List<string>();
-
-            foreach (var list in fileNameList)
-            {
-                var outputFileName = list + Settings.OutputFileExtension;
-                if (functionType != "10")
-                {
-                    outputFileName = _outputDeletePrefix + outputFileName;
-                }
-
-                return_fileNameList.Add(outputFileName);
-            }
-
-            return return_fileNameList;
-        }
-
-        private static List<string> GetoutputFileName(int fileType)
-        {
-            var fileNameList = new List<string>();
-
-            switch (fileType)
-            {
-                case Constants.FileTypeEmployee:
-                    fileNameList.Add(_outputEmployeeFileName);
-                    fileNameList.Add(_outputEmployeeAuthorityFileName);
-                    break;
-                case Constants.FileTypeItem:
-                    fileNameList.Add(_outputItemFileName);
-                    break;
-            }
-
-            return fileNameList;
         }
     }
 }
