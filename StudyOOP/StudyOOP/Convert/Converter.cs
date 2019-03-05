@@ -29,7 +29,7 @@
 
         private static readonly int _itemBodyLineSize = 35;
 
-        private static FileSettings fileSettings;
+        private static FileSetting fileSetting;
 
         public static void ConvertFixedLengthFileToTSVFile(ConvertMode mode)
         {
@@ -53,12 +53,12 @@
                     }
 
                     // モードによってファイル名、行の長さを取得
-                    if (!GetInputFileName(mode))
+                    if (!SetInputFileSetting(mode))
                     {
                         continue;
                     }
 
-                    if (fileSettings.Name == string.Empty)
+                    if (fileSetting.Name == string.Empty)
                     {
                         continue;
                     }
@@ -92,7 +92,7 @@
                         }
 
                         // ファイル出力処理
-                        if (!(OutputFiles(line) == 0))
+                        if (!OutputFiles(line))
                         {
                             continue;
                         }
@@ -107,31 +107,31 @@
 
         private static bool IsFileNameMatchWithoutExtension(string filePath)
         {
-            return Path.GetFileNameWithoutExtension(filePath).Equals(fileSettings.Name, StringComparison.OrdinalIgnoreCase);
+            return Path.GetFileNameWithoutExtension(filePath).Equals(fileSetting.Name, StringComparison.OrdinalIgnoreCase);
         }
 
         private static bool IsHeaderLineMatchFilename(string headerLine)
         {
-            return headerLine.Trim().Equals(fileSettings.Name, StringComparison.OrdinalIgnoreCase);
+            return headerLine.Trim().Equals(fileSetting.Name, StringComparison.OrdinalIgnoreCase);
         }
 
         private static bool IsLineLengthMatchBodyLineSize(string line)
         {
-            return line.Length == fileSettings.LineSize;
+            return line.Length == fileSetting.LineSize;
         }
 
-        private static bool GetInputFileName(ConvertMode mode)
+        private static bool SetInputFileSetting(ConvertMode mode)
         {
             switch (mode)
             {
                 case ConvertMode.ModeEmployee:
-                    fileSettings.Name = _inputEmployeeFileName;
-                    fileSettings.LineSize = _employeeBodyLineSize;
+                    fileSetting.Name = _inputEmployeeFileName;
+                    fileSetting.LineSize = _employeeBodyLineSize;
                     break;
 
                 case ConvertMode.ModeItem:
-                    fileSettings.Name = _inputItemFileName;
-                    fileSettings.LineSize = _itemBodyLineSize;
+                    fileSetting.Name = _inputItemFileName;
+                    fileSetting.LineSize = _itemBodyLineSize;
                     break;
 
                 default:
@@ -141,62 +141,65 @@
             return true;
         }
 
-        private static int OutputFiles(string line)
+        private static bool OutputFiles(string line)
         {
-            var index = 0;
-            var length = 2;
-            var functionType = line.Substring(index, length);
-            var cnt = 0;
+            var outputfiles = new List<OutputFile>();
 
             // 出力するファイルによって出力内容を変える
-            if (!(OutputFileContents(index, length, line) == 0))
+            if (!OutputFileContents(line, outputfiles))
             {
-                return -1;
+                return false;
             }
 
-            foreach (var outputFileName in fileSettings.OutputFileName)
+            foreach (var outputfile in outputfiles)
             {
-                var outputFile = outputFileName + Settings.OutputFileExtension;
-                if (functionType != "10")
+                var outputFile = outputfile.FileName + Settings.OutputFileExtension;
+                if (GetFunctionType(line) != "10")
                 {
                     outputFile = _outputDeletePrefix + outputFile;
                 }
 
-                var outputline = fileSettings.OutputLine[cnt];
+                var outputline = outputfile.Line;
                 File.AppendAllText(Path.Combine(Settings.OutputDirectory, outputFile), outputline, _outputEncode);
-                cnt += 1;
             }
 
-            return 0;
+            return true;
         }
 
-        private static int OutputFileContents(int index, int length, string line)
+        private static string GetFunctionType(string line)
         {
-            fileSettings.OutputLine = new List<string>();
-            fileSettings.OutputFileName = new List<string>();
-
-            if (fileSettings.Name == _inputEmployeeFileName)
-            {
-                return GetPrintContentModeEmployee(index, length, line);
-            }
-
-            if (fileSettings.Name == _inputItemFileName)
-            {
-                return GetPrintContentModeItem(index, length, line);
-            }
-
-            return -1;
+            var index = 0;
+            var length = 2;
+            return line.Substring(index, length);
         }
 
-        private static int GetPrintContentModeEmployee(int index, int length, string line)
+        private static bool OutputFileContents(string line, List<OutputFile> outputfiles)
         {
+            if (fileSetting.Name == _inputEmployeeFileName)
+            {
+                return GetPrintContentModeEmployee(line, outputfiles);
+            }
+
+            if (fileSetting.Name == _inputItemFileName)
+            {
+                return GetPrintContentModeItem(line, outputfiles);
+            }
+
+            return false;
+        }
+
+        private static bool GetPrintContentModeEmployee(string line, List<OutputFile> outputfiles)
+        {
+            var index = 0;
+            var length = 2;
+
             index += length;
             var authority = string.Empty;
 
             length = 5;
             if (!int.TryParse(line.Substring(index, length), out int code))
             {
-                return -1;
+                return false;
             }
 
             index += length;
@@ -209,21 +212,22 @@
             authority = line.Substring(index, length);
             index += length;
 
-            fileSettings.OutputLine.Add(string.Join(Settings.TsvSeparater, code.ToString().PadLeft(5, '0'), name.Trim()) + Environment.NewLine);
-            fileSettings.OutputLine.Add(string.Join(Settings.TsvSeparater, code.ToString().PadLeft(5, '0'), authority) + Environment.NewLine);
-            fileSettings.OutputFileName.Add(_outputEmployeeFileName);
-            fileSettings.OutputFileName.Add(_outputEmployeeAuthorityFileName);
+            outputfiles.Add(new OutputFile(string.Join(Settings.TsvSeparater, code.ToString().PadLeft(5, '0'), name.Trim()) + Environment.NewLine, _outputEmployeeFileName));
+            outputfiles.Add(new OutputFile(string.Join(Settings.TsvSeparater, code.ToString().PadLeft(5, '0'), authority) + Environment.NewLine, _outputEmployeeAuthorityFileName));
 
-            return 0;
+            return true;
         }
 
-        private static int GetPrintContentModeItem(int index, int length, string line)
+        private static bool GetPrintContentModeItem(string line, List<OutputFile> outputfiles)
         {
+            var index = 0;
+            var length = 2;
+
             index += length;
             length = 13;
             if (!long.TryParse(line.Substring(index, length), out long code))
             {
-                return -1;
+                return false;
             }
 
             index += length;
@@ -235,15 +239,14 @@
             length = 10;
             if (!decimal.TryParse(line.Substring(index, length), out decimal unitPrice))
             {
-                return -1;
+                return false;
             }
 
             index += length;
 
-            fileSettings.OutputLine.Add(string.Join(Settings.TsvSeparater, code.ToString().PadLeft(13, '0'), name.Trim(), unitPrice) + Environment.NewLine);
-            fileSettings.OutputFileName.Add(_outputItemFileName);
+            outputfiles.Add(new OutputFile(string.Join(Settings.TsvSeparater, code.ToString().PadLeft(13, '0'), name.Trim(), unitPrice) + Environment.NewLine, _outputItemFileName));
 
-            return 0;
+            return true;
         }
     }
 }
