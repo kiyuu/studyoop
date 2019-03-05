@@ -10,6 +10,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Common\FileInformation.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="output\delete_Employee.TSV" />
     <None Remove="output\delete_EmployeeAuthority.TSV" />
     <None Remove="output\Employee.TSV" />

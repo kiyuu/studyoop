@@ -51,8 +51,13 @@
                     }
 
                     var lines = File.ReadLines(filePath, _inputEncode);
+                    var fileName = GetFileName(fileType);
+                    if (fileName == string.Empty)
+                    {
+                        continue;
+                    }
 
-                    if ((GetFileName(fileType) == string.Empty) || (!IsHeaderLineValid(lines, GetFileName(fileType))))
+                    if (!IsHeaderLineValid(lines, fileName))
                     {
                         continue;
                     }
@@ -103,23 +108,27 @@
             foreach (var line in lines.Skip(1))
             {
                 // 全角文字ない前提
-                if ((GetBodyLineSize(fileType) == 0) || (!IsLengthValid(line, GetBodyLineSize(fileType))))
+                var lineSize = GetBodyLineSize(fileType);
+                if (lineSize == 0)
                 {
                     continue;
                 }
 
-                FileInformation fileInfo;
-                fileInfo.FileName = new List<string>();
-                fileInfo.Line = new List<string>();
-
-                if (!IsFileDetailValid(line, fileType, fileInfo))
+                if (!IsLengthValid(line, lineSize))
                 {
                     continue;
                 }
 
-                for (int i = 0; i <= fileInfo.FileName.Count - 1; i++)
+                List<ConvertedFileInformation> convertedfileInformations = new List<ConvertedFileInformation>();
+
+                if (!IsFileDetailValid(line, fileType, convertedfileInformations))
                 {
-                    File.AppendAllText(Path.Combine(Settings.OutputDirectory, fileInfo.FileName[i]), fileInfo.Line[i], _outputEncode);
+                    continue;
+                }
+
+                foreach (ConvertedFileInformation convertedFileInformation in convertedfileInformations)
+                {
+                    File.AppendAllText(Path.Combine(Settings.OutputDirectory, convertedFileInformation.FileNames), convertedFileInformation.Lines, _outputEncode);
                 }
             }
         }
@@ -131,7 +140,13 @@
                 return false;
             }
 
-            if ((GetFileName(fileType) == string.Empty) || (!IsFileNameWithoutExtensionValid(filePath, GetFileName(fileType))))
+            var fileName = GetFileName(fileType);
+            if (fileName == string.Empty)
+            {
+                return false;
+            }
+
+            if (!IsFileNameWithoutExtensionValid(filePath, fileName))
             {
                 return false;
             }
@@ -165,19 +180,19 @@
             return line.Length == size;
         }
 
-        private static bool IsFileDetailValid(string line, FileType fileType,  FileInformation fileInfo)
+        private static bool IsFileDetailValid(string line, FileType fileType, List<ConvertedFileInformation> convertedfileInformations)
         {
             switch (fileType)
             {
                 case FileType.FileTypeEmployee:
-                    if (!IsFileDetailValidEmployee(line,  fileInfo))
+                    if (!IsFileDetailValidEmployee(line, convertedfileInformations))
                     {
                         return false;
                     }
 
                     break;
                 case FileType.FileTypeItem:
-                    if (!IsFileDetailValidItem(line,  fileInfo))
+                    if (!IsFileDetailValidItem(line, convertedfileInformations))
                     {
                         return false;
                     }
@@ -185,10 +200,10 @@
                     break;
             }
 
-                return true;
+            return true;
         }
 
-        private static bool IsFileDetailValidEmployee(string line,   FileInformation fileInfo)
+        private static bool IsFileDetailValidEmployee(string line, List<ConvertedFileInformation> convertedfileInformations)
         {
             var index = 0;
             var length = 2;
@@ -225,15 +240,13 @@
                 outputEmployeeAuthorityFileName = _outputDeletePrefix + outputEmployeeAuthorityFileName;
             }
 
-            fileInfo.FileName.Insert(0, outputEmployeeFileName);
-            fileInfo.FileName.Insert(1, outputEmployeeAuthorityFileName);
-            fileInfo.Line.Insert(0, employeeLine);
-            fileInfo.Line.Insert(1, employeeAuthority);
+            convertedfileInformations.Add(new ConvertedFileInformation() { FileNames = outputEmployeeFileName, Lines = employeeLine });
+            convertedfileInformations.Add(new ConvertedFileInformation() { FileNames = outputEmployeeAuthorityFileName, Lines = employeeAuthority });
 
             return true;
         }
 
-        private static bool IsFileDetailValidItem(string line, FileInformation fileInfo)
+        private static bool IsFileDetailValidItem(string line, List<ConvertedFileInformation> convertedfileInformations)
         {
             var index = 0;
             var length = 2;
@@ -267,8 +280,7 @@
                 outputItemFileName = _outputDeletePrefix + outputItemFileName;
             }
 
-            fileInfo.FileName.Add(outputItemFileName);
-            fileInfo.Line.Add(itemLine);
+            convertedfileInformations.Add(new ConvertedFileInformation() { FileNames = outputItemFileName, Lines = itemLine });
 
             return true;
         }
