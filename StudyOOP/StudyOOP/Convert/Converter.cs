@@ -1,6 +1,7 @@
 ﻿namespace StudyOOP.Convert
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Text;
@@ -28,13 +29,9 @@
 
         private static readonly int _itemBodyLineSize = 35;
 
-        public enum ConvertMode : int
-        {
-            ModeEmployee,
-            ModeItem
-        }
+        private static FileSettings fileSettings;
 
-        public static void ConvertDatFileToTSVFile(int mode)
+        public static void ConvertFixedLengthFileToTSVFile(ConvertMode mode)
         {
             if (!Directory.Exists(Settings.InputDirectory))
             {
@@ -55,15 +52,19 @@
                         continue;
                     }
 
-                    // モードによって取込ファイル名を設定
-                    string sfilename = SetInputFileName(mode);
-                    if (sfilename == string.Empty)
+                    // モードによってファイル名、行の長さを取得
+                    if (!GetInputFileName(mode))
+                    {
+                        continue;
+                    }
+
+                    if (fileSettings.Name == string.Empty)
                     {
                         continue;
                     }
 
                     // 取込ファイル名が「WXXX5555」もしくは「WXXX6666」なら処理続行
-                    if (!IsFileNameMatchWithoutExtension(filePath, sfilename))
+                    if (!IsFileNameMatchWithoutExtension(filePath))
                     {
                         continue;
                     }
@@ -77,7 +78,7 @@
                     }
 
                     // 取込ファイルの1行目がファイル名と一致していれば処理続行
-                    if (!IsHeaderLineMatchFilename(headerLine, sfilename))
+                    if (!IsHeaderLineMatchFilename(headerLine))
                     {
                         continue;
                     }
@@ -85,83 +86,15 @@
                     foreach (var line in lines.Skip(1))
                     {
                         // 全角文字ない前提
-                        if (!IsLineLengthMatchBodyLineSize(line, mode))
+                        if (!IsLineLengthMatchBodyLineSize(line))
                         {
                             continue;
                         }
 
-                        var index = 0;
-                        var length = 2;
-                        var functionType = line.Substring(index, length);
-                        index += length;
-
-                        var authority = string.Empty;
-                        var outputLineList = new System.Collections.Generic.List<string>();
-                        var outputFileNameList = new System.Collections.Generic.List<string>();
-
-                        if (mode == (int)ConvertMode.ModeEmployee)
+                        // ファイル出力処理
+                        if (!(OutputFiles(line) == 0))
                         {
-                            length = 5;
-                            if (!int.TryParse(line.Substring(index, length), out int code))
-                            {
-                                continue;
-                            }
-
-                            index += length;
-
-                            length = 10;
-                            var name = line.Substring(index, length);
-                            index += length;
-
-                            length = 1;
-                            authority = line.Substring(index, length);
-                            index += length;
-
-                            outputLineList.Add(string.Join(Settings.TsvSeparater, code.ToString().PadLeft(5, '0'), name.Trim()) + Environment.NewLine);
-                            outputLineList.Add(string.Join(Settings.TsvSeparater, code.ToString().PadLeft(5, '0'), authority) + Environment.NewLine);
-
-                            outputFileNameList.Add(_outputEmployeeFileName);
-                            outputFileNameList.Add(_outputEmployeeAuthorityFileName);
-                        }
-                        else if (mode == (int)ConvertMode.ModeItem)
-                        {
-                            length = 13;
-                            if (!long.TryParse(line.Substring(index, length), out long code))
-                            {
-                                continue;
-                            }
-
-                            index += length;
-
-                            length = 10;
-                            var name = line.Substring(index, length);
-                            index += length;
-
-                            length = 10;
-                            if (!decimal.TryParse(line.Substring(index, length), out decimal unitPrice))
-                            {
-                                continue;
-                            }
-
-                            index += length;
-
-                            outputLineList.Add(string.Join(Settings.TsvSeparater, code.ToString().PadLeft(13, '0'), name.Trim(), unitPrice) + Environment.NewLine);
-                            outputFileNameList.Add(_outputItemFileName);
-                        }
-
-                        var iCnt = 0;
-                        foreach (string outputFileName in outputFileNameList)
-                        {
-                            var outputFile = outputFileName + Settings.OutputFileExtension;
-                            if (functionType != "10")
-                            {
-                                outputFile = _outputDeletePrefix + outputFile;
-                            }
-
-                            var outputline = outputLineList[iCnt];
-                            File.AppendAllText(Path.Combine(Settings.OutputDirectory, outputFile), outputline, _outputEncode);
-
-                            iCnt += 1;
+                            continue;
                         }
                     }
                 }
@@ -172,65 +105,145 @@
             }
         }
 
-        private static string SetInputFileName(int mode)
+        private static bool IsFileNameMatchWithoutExtension(string filePath)
+        {
+            return Path.GetFileNameWithoutExtension(filePath).Equals(fileSettings.Name, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool IsHeaderLineMatchFilename(string headerLine)
+        {
+            return headerLine.Trim().Equals(fileSettings.Name, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool IsLineLengthMatchBodyLineSize(string line)
+        {
+            return line.Length == fileSettings.LineSize;
+        }
+
+        private static bool GetInputFileName(ConvertMode mode)
         {
             switch (mode)
             {
-                case (int)ConvertMode.ModeEmployee:
-                    return _inputEmployeeFileName;
-
-                case (int)ConvertMode.ModeItem:
-                   return _inputItemFileName;
-
-                default:
-                    return string.Empty;
-            }
-        }
-
-        private static bool IsFileNameMatchWithoutExtension(string filePath, string sfileName)
-        {
-            if (!Path.GetFileNameWithoutExtension(filePath).Equals(sfileName, StringComparison.OrdinalIgnoreCase))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        private static bool IsHeaderLineMatchFilename(string headerLine, string sfileName)
-        {
-            if (!headerLine.Trim().Equals(sfileName, StringComparison.OrdinalIgnoreCase))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        private static bool IsLineLengthMatchBodyLineSize(string line, int mode)
-        {
-            int iLineSize = 0;
-
-            switch (mode)
-            {
-                case (int)ConvertMode.ModeEmployee:
-                    iLineSize = _employeeBodyLineSize;
+                case ConvertMode.ModeEmployee:
+                    fileSettings.Name = _inputEmployeeFileName;
+                    fileSettings.LineSize = _employeeBodyLineSize;
                     break;
 
-                case (int)ConvertMode.ModeItem:
-                    iLineSize = _itemBodyLineSize;
+                case ConvertMode.ModeItem:
+                    fileSettings.Name = _inputItemFileName;
+                    fileSettings.LineSize = _itemBodyLineSize;
                     break;
 
                 default:
                     return false;
             }
 
-            if (line.Length != iLineSize)
+            return true;
+        }
+
+        private static int OutputFiles(string line)
+        {
+            var index = 0;
+            var length = 2;
+            var functionType = line.Substring(index, length);
+            var cnt = 0;
+
+            // 出力するファイルによって出力内容を変える
+            if (!(OutputFileContents(index, length, line) == 0))
             {
-                return false;
+                return -1;
             }
 
-            return true;
+            foreach (var outputFileName in fileSettings.OutputFileName)
+            {
+                var outputFile = outputFileName + Settings.OutputFileExtension;
+                if (functionType != "10")
+                {
+                    outputFile = _outputDeletePrefix + outputFile;
+                }
+
+                var outputline = fileSettings.OutputLine[cnt];
+                File.AppendAllText(Path.Combine(Settings.OutputDirectory, outputFile), outputline, _outputEncode);
+                cnt += 1;
+            }
+
+            return 0;
+        }
+
+        private static int OutputFileContents(int index, int length, string line)
+        {
+            fileSettings.OutputLine = new List<string>();
+            fileSettings.OutputFileName = new List<string>();
+
+            if (fileSettings.Name == _inputEmployeeFileName)
+            {
+                return GetPrintContentModeEmployee(index, length, line);
+            }
+
+            if (fileSettings.Name == _inputItemFileName)
+            {
+                return GetPrintContentModeItem(index, length, line);
+            }
+
+            return -1;
+        }
+
+        private static int GetPrintContentModeEmployee(int index, int length, string line)
+        {
+            index += length;
+            var authority = string.Empty;
+
+            length = 5;
+            if (!int.TryParse(line.Substring(index, length), out int code))
+            {
+                return -1;
+            }
+
+            index += length;
+
+            length = 10;
+            var name = line.Substring(index, length);
+            index += length;
+
+            length = 1;
+            authority = line.Substring(index, length);
+            index += length;
+
+            fileSettings.OutputLine.Add(string.Join(Settings.TsvSeparater, code.ToString().PadLeft(5, '0'), name.Trim()) + Environment.NewLine);
+            fileSettings.OutputLine.Add(string.Join(Settings.TsvSeparater, code.ToString().PadLeft(5, '0'), authority) + Environment.NewLine);
+            fileSettings.OutputFileName.Add(_outputEmployeeFileName);
+            fileSettings.OutputFileName.Add(_outputEmployeeAuthorityFileName);
+
+            return 0;
+        }
+
+        private static int GetPrintContentModeItem(int index, int length, string line)
+        {
+            index += length;
+            length = 13;
+            if (!long.TryParse(line.Substring(index, length), out long code))
+            {
+                return -1;
+            }
+
+            index += length;
+
+            length = 10;
+            var name = line.Substring(index, length);
+            index += length;
+
+            length = 10;
+            if (!decimal.TryParse(line.Substring(index, length), out decimal unitPrice))
+            {
+                return -1;
+            }
+
+            index += length;
+
+            fileSettings.OutputLine.Add(string.Join(Settings.TsvSeparater, code.ToString().PadLeft(13, '0'), name.Trim(), unitPrice) + Environment.NewLine);
+            fileSettings.OutputFileName.Add(_outputItemFileName);
+
+            return 0;
         }
     }
 }

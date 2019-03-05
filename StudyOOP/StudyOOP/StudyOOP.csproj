@@ -42,6 +42,5 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="output\" />
-    <Folder Include="Common\" />
   </ItemGroup>
 </Project>

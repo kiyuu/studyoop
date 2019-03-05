@@ -1,13 +1,14 @@
 ﻿namespace StudyOOP
 {
+    using StudyOOP.Common;
     using StudyOOP.Convert;
 
     public class Program
     {
         public static void Main(string[] args)
         {
-            Converter.ConvertDatFileToTSVFile((int)Converter.ConvertMode.ModeEmployee);
-            Converter.ConvertDatFileToTSVFile((int)Converter.ConvertMode.ModeItem);
+            Converter.ConvertFixedLengthFileToTSVFile(ConvertMode.ModeEmployee);
+            Converter.ConvertFixedLengthFileToTSVFile(ConvertMode.ModeItem);
         }
     }
 }
