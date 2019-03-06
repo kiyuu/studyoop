@@ -42,9 +42,9 @@
 
         public string ReadToEnd()
         {
-            // new StreamReader(Path.Combine(@".\", "input", "rss.xml"), Encoding.UTF8).ReadToEnd()で実装としないこと！！！！！！！！！
-            // this.Streamを使用して実装すること
-            throw new NotImplementedException();
+            var binary = new byte[this._stream.Length];
+            this._stream.Read(binary, 0, binary.Length);
+            return this._encoding.GetString(binary);
         }
 
         protected virtual void Dispose(bool isDisposing)
