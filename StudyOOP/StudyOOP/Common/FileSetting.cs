@@ -1,12 +1,25 @@
 ﻿namespace StudyOOP.Common
 {
+    using System;
     using System.Collections.Generic;
-    using System.IO;
 
     public struct FileSetting
     {
-        public string Name;
-        public int LineSize;
+        public FileSetting(string fileName, int lineSize, Func<string, List<OutputFile>> convertFunc)
+        {
+            this.InputFileName = fileName;
+            this.LineSize = lineSize;
+            this.ConvertFunc = convertFunc;
+        }
+
+        public string InputFileName { get; }
+
+        public int LineSize { get; }
+
+        /// <summary>
+        /// Gets (TextLine,OutputFileCollection)
+        /// </summary>
+        public Func<string, List<OutputFile>> ConvertFunc { get; }
     }
 
     public struct OutputFile
