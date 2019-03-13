@@ -12,7 +12,24 @@
 
         protected override string InputFileName => "WXXX5555";
 
-        protected override int BodyLineSize => 18;
+        protected override int BodyLineSizeWithoutFunctionType => 16;
+
+        protected override int FunctionTypeLength => 3;
+
+        protected override string MakeOutputFileName(string functionType, string fileNameWithoutExtension)
+        {
+            var result = fileNameWithoutExtension + Settings.OutputFileExtension;
+            if (functionType == "100")
+            {
+                return result;
+            }
+            else if (functionType == "200")
+            {
+                return this.OutputDeletePrefix + result;
+            }
+
+            return "update_" + result;
+        }
 
         protected override List<ConvertedRecordInfo> ConvertFlatLineToTsvs(string bodyLine, string functionType, int index)
         {

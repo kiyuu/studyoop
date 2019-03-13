@@ -10,7 +10,7 @@
 
         protected override string InputFileName => "WXXX6666";
 
-        protected override int BodyLineSize => 35;
+        protected override int BodyLineSizeWithoutFunctionType => 33;
 
         protected override List<ConvertedRecordInfo> ConvertFlatLineToTsvs(string bodyLine, string functionType, int index)
         {

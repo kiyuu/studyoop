@@ -15,11 +15,15 @@
 
         private readonly int _headerLineCount = 1;
 
-        private readonly string _outputDeletePrefix = "delete_";
-
         protected abstract string InputFileName { get; }
 
-        protected abstract int BodyLineSize { get; }
+        protected int BodyLineSize => this.FunctionTypeLength + this.BodyLineSizeWithoutFunctionType;
+
+        protected abstract int BodyLineSizeWithoutFunctionType { get; }
+
+        protected virtual int FunctionTypeLength => 2;
+
+        protected string OutputDeletePrefix => "delete_";
 
         public void Execute()
         {
@@ -116,7 +120,7 @@
         protected virtual string GetFunctionType(string bodyLine, out int nextStartIndex)
         {
             nextStartIndex = 0;
-            var length = 2;
+            var length = this.FunctionTypeLength;
             var resultFunctionType = bodyLine.Substring(nextStartIndex, length);
             nextStartIndex += length;
             return resultFunctionType;
@@ -124,12 +128,12 @@
 
         protected abstract List<ConvertedRecordInfo> ConvertFlatLineToTsvs(string bodyLine, string functionType, int index);
 
-        protected string MakeOutputFileName(string functionType, string fileNameWithoutExtension)
+        protected virtual string MakeOutputFileName(string functionType, string fileNameWithoutExtension)
         {
             var result = fileNameWithoutExtension + Settings.OutputFileExtension;
             if (functionType != "10")
             {
-                result = this._outputDeletePrefix + result;
+                result = this.OutputDeletePrefix + result;
             }
 
             return result;
