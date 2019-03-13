@@ -7,8 +7,10 @@
     {
         public static void Main(string[] args)
         {
-            Converter.ConvertDatToTSV(FileType.FileTypeEmployee);
-            Converter.ConvertDatToTSV(FileType.FileTypeItem);
+            var convertEmployee = new ConvertEmployee();
+            convertEmployee.ExecuteConvertDatToTSV();
+            var convertItem = new ConvertItem();
+            convertItem.ExecuteConvertDatToTSV();
         }
     }
 }

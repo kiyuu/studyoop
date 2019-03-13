@@ -5,7 +5,7 @@
 
     public struct ConvertedFileInformation
     {
-        public string FileNames;
-        public string Lines;
+        public string FileName;
+        public string Line;
     }
 }
