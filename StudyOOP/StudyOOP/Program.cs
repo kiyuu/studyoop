@@ -7,8 +7,11 @@
     {
         public static void Main(string[] args)
         {
-            Converter.ConvertFixedLengthFileToTSVFile(ConvertMode.ModeEmployee);
-            Converter.ConvertFixedLengthFileToTSVFile(ConvertMode.ModeItem);
+            ConverterBase employeeFile = new Employee();
+            ConverterBase itemFile = new Item();
+
+            employeeFile.ConvertFixedLengthFileToTSVFile();
+            itemFile.ConvertFixedLengthFileToTSVFile();
         }
     }
 }
