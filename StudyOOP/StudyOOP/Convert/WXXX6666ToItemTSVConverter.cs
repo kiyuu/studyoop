@@ -2,15 +2,33 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using StudyOOP.Common;
 
     public class WXXX6666ToItemTSVConverter : FlatFileToTsvConverterBase
     {
         private static readonly string _outputItemFileName = "Item";
+        private readonly int _dateLength = 8;
 
         protected override string InputFileName => "WXXX6666";
 
         protected override int BodyLineSizeWithoutFunctionType => 33;
+
+        protected override bool IsFileNameWithoutExtensionValid(string filePath)
+        {
+            var fileName = Path.GetFileNameWithoutExtension(filePath);
+            if (fileName.Length != this._dateLength + this.InputFileName.Length)
+            {
+                return false;
+            }
+
+            if (!DateTime.TryParseExact(fileName.Substring(0, this._dateLength), "yyyyMMdd", null, System.Globalization.DateTimeStyles.None, out DateTime dateTime))
+            {
+                return false;
+            }
+
+            return base.IsFileNameWithoutExtensionValid(fileName.Substring(this._dateLength, this.InputFileName.Length));
+        }
 
         protected override List<ConvertedRecordInfo> ConvertFlatLineToTsvs(string bodyLine, string functionType, int index)
         {
