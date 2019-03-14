@@ -8,7 +8,7 @@
     {
         public static void Main(string[] args)
         {
-            var converters = Factory.CreateInstances();
+            var converters = Factory.CreateInstances(InstanceGroupIDs.FlatFileToTsvConverters);
 
             foreach (var converter in converters)
             {

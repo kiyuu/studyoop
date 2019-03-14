@@ -1,5 +1,7 @@
 ﻿namespace StudyOOP.Common
 {
+    using System;
+    using System.Collections.Generic;
     using StudyOOP.Convert;
 
     /// <summary>
@@ -7,31 +9,32 @@
     /// </summary>
     public static class Factory
     {
-        public static FlatFileToTsvConverterBase[] CreateInstances()
+        public static FlatFileToTsvConverterBase[] CreateInstances(InstanceGroupID instanceGroupID)
         {
-            var instances = new FlatFileToTsvConverterBase[]
-                            {
-                                CreateInstance(FuctoryIds.EmployeeConverterId),
-                                CreateInstance(FuctoryIds.ItemConverterId)
-                            };
+            var instances = new List<FlatFileToTsvConverterBase>();
+            foreach (var instanceID in instanceGroupID.InstanceIds)
+            {
+                instances.Add(CreateInstance(instanceID));
+            }
 
-            return instances;
+            return instances.ToArray();
         }
 
-        private static FlatFileToTsvConverterBase CreateInstance(string id)
+        public static FlatFileToTsvConverterBase CreateInstance(InstanceID instancesID)
         {
-            if (id == FuctoryIds.EmployeeConverterId)
+            var instance = CreateInstance(instancesID.ClassName) as FlatFileToTsvConverterBase;
+            if (instance == null)
             {
-                return new WXXX6666ToItemTSVConverter();
+                throw new ApplicationException($"{instancesID.ClassName} can't create instance");
             }
-            else if (id == FuctoryIds.ItemConverterId)
-            {
-                return new WXXX6666ToItemTSVConverter();
-            }
-            else
-            {
-                return null;
-            }
+
+            return instance;
+        }
+
+        private static object CreateInstance(string className)
+        {
+            var t = Type.GetType(className);
+            return Activator.CreateInstance(t);
         }
     }
 }
