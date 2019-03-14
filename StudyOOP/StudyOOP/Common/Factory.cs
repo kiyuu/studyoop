@@ -7,7 +7,18 @@
     /// </summary>
     public static class Factory
     {
-        public static FlatFileToTsvConverterBase CreateInstance(string id)
+        public static FlatFileToTsvConverterBase[] CreateInstances()
+        {
+            var instances = new FlatFileToTsvConverterBase[]
+                            {
+                                CreateInstance(FuctoryIds.EmployeeConverterId),
+                                CreateInstance(FuctoryIds.ItemConverterId)
+                            };
+
+            return instances;
+        }
+
+        private static FlatFileToTsvConverterBase CreateInstance(string id)
         {
             if (id == FuctoryIds.EmployeeConverterId)
             {

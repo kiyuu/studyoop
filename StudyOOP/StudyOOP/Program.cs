@@ -8,13 +8,12 @@
     {
         public static void Main(string[] args)
         {
-            var converters = new List<FlatFileToTsvConverterBase>()
-                {
-                    Factory.CreateInstance(FuctoryIds.EmployeeConverterId),
-                    Factory.CreateInstance(FuctoryIds.ItemConverterId)
-                };
+            var converters = Factory.CreateInstances();
 
-            converters.ForEach(c => c.Execute());
+            foreach (var converter in converters)
+            {
+                converter.Execute();
+            }
         }
     }
 }
