@@ -1,13 +1,10 @@
 ﻿namespace StudyOOP.Common
 {
-    public class InstanceGroupID : IDBase
+    public class InstanceGroupID : IdBase
     {
-        public InstanceGroupID(string id, InstanceID[] instanceIds)
+        public InstanceGroupID(string id)
             : base(id)
         {
-            this.InstanceIds = instanceIds;
         }
-
-        public InstanceID[] InstanceIds { get; }
     }
 }

@@ -1,8 +1,8 @@
 ﻿namespace StudyOOP.Common
 {
-    public abstract class IDBase
+    public abstract class IdBase
     {
-        protected IDBase(string id)
+        protected IdBase(string id)
         {
             this.Id = id;
         }

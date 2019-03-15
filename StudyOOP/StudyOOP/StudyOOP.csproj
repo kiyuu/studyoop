@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <NoWarn>1701;1702;1705;SA1633;SA1309;SA1652</NoWarn>
+    <NoWarn>1701;1702;1705;SA1633;SA1309;SA1652,SA1008</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,6 +23,7 @@
     <None Remove="output\EmployeeAuthority.tsv" />
     <None Remove="output\Item.tsv" />
     <None Remove="input\WXXX5555.dat" />
+    <None Remove="Settings\InstanceInfo.xml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,6 +38,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="output\_output">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Settings\InstanceInfo.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

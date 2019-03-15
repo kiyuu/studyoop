@@ -1,8 +1,6 @@
 ﻿namespace StudyOOP
 {
-    using System.Collections.Generic;
     using StudyOOP.Common;
-    using StudyOOP.Convert;
 
     public class Program
     {
@@ -14,6 +12,9 @@
             {
                 converter.Execute();
             }
+
+            ////Factory.CreateInstance(InstanceIDs.EmployeeConverter).Execute();
+            ////Factory.CreateInstance(InstanceIDs.ItemConverter).Execute();
         }
     }
 }
