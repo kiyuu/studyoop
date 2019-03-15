@@ -5,7 +5,6 @@
     using System.IO;
     using System.Linq;
     using System.Xml.Linq;
-    using StudyOOP.Convert;
 
     /// <summary>
     /// シンプルファクトリーパターン
@@ -55,30 +54,32 @@
             _instanceGroupInfos = new Dictionary<string, IReadOnlyDictionary<string, string>>(instanceGroups);
         }
 
-        public static FlatFileToTsvConverterBase[] CreateInstances(InstanceGroupID instanceGroupID)
+        public static T[] CreateInstances<T>(InstanceGroupID<T> instanceGroupID)
+            where T : class
         {
             if (!_instanceGroupInfos.TryGetValue(instanceGroupID.Id, out IReadOnlyDictionary<string, string> value))
             {
                 throw new ApplicationException($"{instanceGroupID.Id} is not found");
             }
 
-            var instances = new List<FlatFileToTsvConverterBase>();
+            var instances = new List<T>();
             foreach (var className in value.Select(v => v.Value))
             {
-                instances.Add(CreateInstance(className));
+                instances.Add(CreateInstance<T>(className));
             }
 
             return instances.ToArray();
         }
 
-        public static FlatFileToTsvConverterBase CreateInstance(InstanceID instancesID)
+        public static T CreateInstance<T>(InstanceID<T> instancesID)
+            where T : class
         {
             if (!_instanceInfos.TryGetValue(instancesID.Id, out string className))
             {
                 throw new ApplicationException($"{instancesID.Id} is not found");
             }
 
-            return CreateInstance(className);
+            return CreateInstance<T>(className);
         }
 
         private static (string id, string className) GetInstanceInfo(XElement element)
@@ -86,10 +87,11 @@
             return (id: element.Attribute("Id").Value, className: element.Attribute("ClassName").Value);
         }
 
-        private static FlatFileToTsvConverterBase CreateInstance(string className)
+        private static T CreateInstance<T>(string className)
+            where T : class
         {
             var t = Type.GetType(className);
-            var instance = Activator.CreateInstance(t) as FlatFileToTsvConverterBase;
+            var instance = Activator.CreateInstance(t) as T;
             if (instance == null)
             {
                 throw new ApplicationException($"{className} can't create instance");

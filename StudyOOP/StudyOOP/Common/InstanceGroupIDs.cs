@@ -1,8 +1,10 @@
 ﻿namespace StudyOOP.Common
 {
+    using StudyOOP.Convert;
+
     public static class InstanceGroupIDs
     {
-        public static InstanceGroupID FlatFileToTsvConverters =>
-            new InstanceGroupID(nameof(FlatFileToTsvConverters));
+        public static InstanceGroupID<FlatFileToTsvConverterBase> FlatFileToTsvConverters =>
+            new InstanceGroupID<FlatFileToTsvConverterBase>(nameof(FlatFileToTsvConverters));
     }
 }

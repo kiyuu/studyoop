@@ -1,11 +1,13 @@
 ﻿namespace StudyOOP.Common
 {
+    using StudyOOP.Convert;
+
     public static class InstanceIDs
     {
-        public static InstanceID EmployeeConverter =>
-            new InstanceID(nameof(EmployeeConverter));
+        public static InstanceID<FlatFileToTsvConverterBase> EmployeeConverter =>
+            new InstanceID<FlatFileToTsvConverterBase>(nameof(EmployeeConverter));
 
-        public static InstanceID ItemConverter =>
-            new InstanceID(nameof(ItemConverter));
+        public static InstanceID<FlatFileToTsvConverterBase> ItemConverter =>
+            new InstanceID<FlatFileToTsvConverterBase>(nameof(ItemConverter));
     }
 }

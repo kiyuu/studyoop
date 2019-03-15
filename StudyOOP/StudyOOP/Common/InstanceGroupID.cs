@@ -1,6 +1,6 @@
 ﻿namespace StudyOOP.Common
 {
-    public class InstanceGroupID : IdBase
+    public class InstanceGroupID<T> : IdBase
     {
         public InstanceGroupID(string id)
             : base(id)
