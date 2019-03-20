@@ -15,12 +15,9 @@
 
         private readonly string _outputEmployeeAuthorityFileName = "EmployeeAuthority";
 
-        private readonly int _employeeBodyLineSize = 18;
+        private readonly int _employeeBodyLineSize = 19;
 
-        public void ExecuteConvertDatToTSV()
-        {
-            this.ConvertDatToTSV();
-        }
+        private readonly string _outputUpdate_Prefix = "update_";
 
         protected override string GetFileName()
         {
@@ -58,10 +55,38 @@
             var outputEmployeeFileName = this._outputEmployeeFileName + Settings.OutputFileExtension;
             var outputEmployeeAuthorityFileName = this._outputEmployeeAuthorityFileName + Settings.OutputFileExtension;
 
-            convertedfileInformations.Add(new ConvertedFileInformation() { FileName = this.CreateDeleteFileName(outputEmployeeFileName, functionType), Line = employeeLine });
-            convertedfileInformations.Add(new ConvertedFileInformation() { FileName = this.CreateDeleteFileName(outputEmployeeAuthorityFileName, functionType), Line = employeeAuthority });
+            convertedfileInformations.Add(new ConvertedFileInformation(this.MakeDeleteFileName(outputEmployeeFileName, functionType), employeeLine));
+            convertedfileInformations.Add(new ConvertedFileInformation(this.MakeDeleteFileName(outputEmployeeAuthorityFileName, functionType), employeeAuthority));
 
             return true;
+        }
+
+        protected override string GetFunctionType(string line, out int index)
+        {
+            index = 0;
+            var length = 3;
+            var functionType = line.Substring(index, length);
+            index += length;
+            return functionType;
+        }
+
+        protected override string MakeDeleteFileName(string outPutFileName, string functionType)
+        {
+            var fileName = outPutFileName;
+
+            switch (functionType)
+            {
+                case "100":
+                    break;
+                case "200":
+                    fileName = this.OutputDeletePrefix + outPutFileName;
+                    break;
+                default:
+                    fileName = this._outputUpdate_Prefix + outPutFileName;
+                    break;
+            }
+
+            return fileName;
         }
     }
 }

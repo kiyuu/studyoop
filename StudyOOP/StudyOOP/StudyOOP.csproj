@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="input\20190320WXXX6666.dat" />
     <None Remove="output\delete_Employee.TSV" />
     <None Remove="output\delete_EmployeeAuthority.TSV" />
     <None Remove="output\Employee.TSV" />
@@ -27,7 +28,6 @@
     <None Remove="output\EmployeeAuthority.tsv" />
     <None Remove="output\Item.tsv" />
     <None Remove="input\WXXX5555.dat" />
-    <None Remove="input\WXXX6666.dat" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,7 +38,7 @@
     <Content Include="input\WXXX5555.dat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="input\WXXX6666.dat">
+    <Content Include="input\20190320WXXX6666.dat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="output\_output">

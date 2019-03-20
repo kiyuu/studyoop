@@ -15,11 +15,6 @@
 
         private readonly int _itemBodyLineSize = 35;
 
-        public void ExecuteConvertDatToTSV()
-        {
-            this.ConvertDatToTSV();
-        }
-
         protected override string GetFileName()
         {
             return this._inputItemFileName;
@@ -54,9 +49,42 @@
             var itemLine = string.Join(Settings.TsvSeparater, code.ToString().PadLeft(13, '0'), name.Trim(), unitPrice) + Environment.NewLine;
             var outputItemFileName = this._outputItemFileName + Settings.OutputFileExtension;
 
-            convertedfileInformations.Add(new ConvertedFileInformation() { FileName = this.CreateDeleteFileName(outputItemFileName, functionType), Line = itemLine });
+            convertedfileInformations.Add(new ConvertedFileInformation(this.MakeDeleteFileName(outputItemFileName, functionType), itemLine));
 
             return true;
+        }
+
+        protected override bool IsFileNameWithoutExtensionValid(string filePath, string fileName)
+        {
+            var dateFormat = "yyyyMMdd";
+            var dateFormatLength = dateFormat.Length;
+            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(filePath);
+
+            if (!this.IsFileNameDateValid(fileNameWithoutExtension, dateFormat, dateFormatLength))
+            {
+                return false;
+            }
+
+            return this.IsFileNameWithoutDateValid(fileNameWithoutExtension, fileName, dateFormatLength);
+        }
+
+        private bool IsFileNameDateValid(string fileName, string dateFormat, int dateFormatLength)
+        {
+            var index = 0;
+            if (string.IsNullOrEmpty(fileName) || fileName.Length < dateFormatLength)
+            {
+                return false;
+            }
+
+            var datePart = fileName.Substring(index, dateFormatLength);
+            DateTime datetime;
+            return DateTime.TryParseExact(datePart, dateFormat, System.Globalization.CultureInfo.InstalledUICulture, System.Globalization.DateTimeStyles.None, out datetime);
+        }
+
+        private bool IsFileNameWithoutDateValid(string fileNameWithoutExtension, string fileName, int dateFormatLength)
+        {
+            var fileNamePart = fileNameWithoutExtension.Substring(dateFormatLength);
+            return fileNamePart.Equals(fileName, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

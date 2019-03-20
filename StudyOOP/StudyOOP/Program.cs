@@ -7,10 +7,10 @@
     {
         public static void Main(string[] args)
         {
-            var convertEmployee = new ConvertEmployee();
-            convertEmployee.ExecuteConvertDatToTSV();
-            var convertItem = new ConvertItem();
-            convertItem.ExecuteConvertDatToTSV();
+            ConverterBase convertEmployee = new ConvertEmployee();
+            convertEmployee.ConvertDatToTSV();
+            ConverterBase convertItem = new ConvertItem();
+            convertItem.ConvertDatToTSV();
         }
     }
 }

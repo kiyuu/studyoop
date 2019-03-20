@@ -81,8 +81,7 @@
                     continue;
                 }
 
-                var index = 0;
-                var functionType = this.GetFunctionType(line, ref index);
+                var functionType = this.GetFunctionType(line, out int index);
                 List<ConvertedFileInformation> convertedfileInformations = new List<ConvertedFileInformation>();
 
                 if (!this.IsFileDetailValid(line, convertedfileInformations, functionType, index))
@@ -103,7 +102,7 @@
 
         protected abstract bool IsFileDetailValid(string line, List<ConvertedFileInformation> convertedfileInformations, string functionType, int index);
 
-        protected virtual string GetFunctionType(string line, ref int index)
+        protected virtual string GetFunctionType(string line, out int index)
         {
             index = 0;
             var length = 2;
@@ -112,7 +111,7 @@
             return functionType;
         }
 
-        protected virtual string CreateDeleteFileName(string outPutFileName, string functionType)
+        protected virtual string MakeDeleteFileName(string outPutFileName, string functionType)
         {
             var fileName = outPutFileName;
             if (functionType != "10")
@@ -123,14 +122,14 @@
             return fileName;
         }
 
+        protected virtual bool IsFileNameWithoutExtensionValid(string filePath, string fileName)
+        {
+            return Path.GetFileNameWithoutExtension(filePath).Equals(fileName, StringComparison.OrdinalIgnoreCase);
+        }
+
         private bool IsExtensionValid(string filePath)
         {
             return Path.GetExtension(filePath).Equals(Settings.InputFileExtension, StringComparison.OrdinalIgnoreCase);
-        }
-
-        private bool IsFileNameWithoutExtensionValid(string filePath, string fileName)
-        {
-            return Path.GetFileNameWithoutExtension(filePath).Equals(fileName, StringComparison.OrdinalIgnoreCase);
         }
 
         private bool IsHeaderLineValid(IEnumerable<string> lines, string fileName)
