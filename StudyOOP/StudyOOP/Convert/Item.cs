@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.IO;
     using System.Text;
     using StudyOOP.Common;
@@ -18,7 +19,7 @@
         {
             get
             {
-                return new FileSetting() { Name = this._inputItemFileName, LineSize = this._itemBodyLineSize };
+                return new FileSetting(this._inputItemFileName, this._itemBodyLineSize);
             }
         }
 
@@ -30,6 +31,27 @@
         ////    fileSetting.LineSize = this._itemBodyLineSize;
         ////    return fileSetting;
         ////}
+
+        protected override bool IsFileNameMatchWithoutExtension(string filePath)
+        {
+            filePath = System.IO.Path.GetFileName(filePath);
+            if (filePath.Length < 8)
+            {
+                return false;
+            }
+
+            var filename = filePath.Substring(0, 8);
+            var format = "yyyyMMdd";
+            CultureInfo ci = CultureInfo.CurrentCulture;
+            DateTimeStyles dts = DateTimeStyles.None;
+            DateTime dt;
+            if (!DateTime.TryParseExact(filename, format, ci, dts, out dt))
+            {
+                return false;
+            }
+
+            return Path.GetFileNameWithoutExtension(filePath).Equals(this.FileSetting.Name, StringComparison.OrdinalIgnoreCase);
+        }
 
         protected override bool GetPrintContent(string line, List<OutputFile> outputfiles)
         {

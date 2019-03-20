@@ -87,9 +87,19 @@
 
         protected abstract bool GetPrintContent(string line, List<OutputFile> outputfiles);
 
-        private bool IsFileNameMatchWithoutExtension(string filePath)
+        protected virtual bool IsFileNameMatchWithoutExtension(string filePath)
         {
             return Path.GetFileNameWithoutExtension(filePath).Equals(this.FileSetting.Name, StringComparison.OrdinalIgnoreCase);
+        }
+
+        protected virtual string GetOutputFileName(string line)
+        {
+            if (this.GetFunctionType(line) != "10")
+            {
+                return this._outputDeletePrefix;
+            }
+
+            return string.Empty;
         }
 
         private bool IsHeaderLineMatchFileName(string headerLine)
@@ -115,10 +125,8 @@
             foreach (var outputfile in outputfiles)
             {
                 var outputFile = outputfile.FileName + Settings.OutputFileExtension;
-                if (this.GetFunctionType(line) != "10")
-                {
-                    outputFile = this._outputDeletePrefix + outputFile;
-                }
+
+                outputFile = this.GetOutputFileName(line) + outputFile;
 
                 var outputline = outputfile.Line;
                 File.AppendAllText(Path.Combine(Settings.OutputDirectory, outputFile), outputline, this._outputEncode);

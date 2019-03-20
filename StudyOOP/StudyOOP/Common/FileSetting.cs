@@ -3,22 +3,16 @@
     using System.Collections.Generic;
     using System.IO;
 
-    public struct FileSetting
+    public class FileSetting
     {
-        public string Name;
-        public int LineSize;
-    }
-
-    public struct OutputFile
-    {
-        public OutputFile(string line, string fileName)
+        public FileSetting(string name, int linesize)
         {
-            this.Line = line;
-            this.FileName = fileName;
+            this.Name = name;
+            this.LineSize = linesize;
         }
 
-        public string Line { get; }
+        public string Name { get; }
 
-        public string FileName { get; }
+        public int LineSize { get; }
     }
 }

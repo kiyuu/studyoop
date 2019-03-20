@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Text;
     using StudyOOP.Common;
 
@@ -13,20 +14,24 @@
 
         private readonly string _outputEmployeeAuthorityFileName = "EmployeeAuthority";
 
-        private readonly int _employeeBodyLineSize = 18;
+        private readonly string _outputDeletePrefix = "delete_";
+
+        private readonly string _outputUpdatePrefix = "update_";
+
+        private readonly int _employeeBodyLineSize = 19;
 
         protected override FileSetting FileSetting
         {
             get
             {
-                return new FileSetting() { Name = this._inputEmployeeFileName, LineSize = this._employeeBodyLineSize };
+                return new FileSetting(this._inputEmployeeFileName, this._employeeBodyLineSize);
             }
         }
 
         protected override bool GetPrintContent(string line, List<OutputFile> outputfiles)
         {
             var index = 0;
-            var length = 2;
+            var length = 3;
 
             index += length;
             var authority = string.Empty;
@@ -51,6 +56,21 @@
             outputfiles.Add(new OutputFile(string.Join(Settings.TsvSeparater, code.ToString().PadLeft(5, '0'), authority) + Environment.NewLine, this._outputEmployeeAuthorityFileName));
 
             return true;
+        }
+
+        protected override string GetOutputFileName(string line)
+        {
+            switch (line.Substring(0, 3))
+            {
+                case "100":
+                    return string.Empty;
+
+                case "200":
+                    return this._outputDeletePrefix;
+
+                default:
+                    return this._outputUpdatePrefix;
+            }
         }
     }
 }
