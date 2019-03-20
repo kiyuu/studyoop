@@ -34,7 +34,7 @@
 
         protected override bool IsFileNameMatchWithoutExtension(string filePath)
         {
-            filePath = System.IO.Path.GetFileName(filePath);
+            filePath = Path.GetFileNameWithoutExtension(filePath);
             if (filePath.Length < 8)
             {
                 return false;
@@ -42,15 +42,14 @@
 
             var filename = filePath.Substring(0, 8);
             var format = "yyyyMMdd";
-            CultureInfo ci = CultureInfo.CurrentCulture;
-            DateTimeStyles dts = DateTimeStyles.None;
             DateTime dt;
-            if (!DateTime.TryParseExact(filename, format, ci, dts, out dt))
+            if (!DateTime.TryParseExact(filename, format, CultureInfo.CurrentCulture, DateTimeStyles.None, out dt))
             {
                 return false;
             }
 
-            return Path.GetFileNameWithoutExtension(filePath).Equals(this.FileSetting.Name, StringComparison.OrdinalIgnoreCase);
+            var comparefilename = filePath.Substring(8, filePath.Length - 8);
+            return Path.GetFileNameWithoutExtension(comparefilename).Equals(this.FileSetting.Name, StringComparison.OrdinalIgnoreCase);
         }
 
         protected override bool GetPrintContent(string line, List<OutputFile> outputfiles)

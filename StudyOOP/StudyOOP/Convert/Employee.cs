@@ -14,8 +14,6 @@
 
         private readonly string _outputEmployeeAuthorityFileName = "EmployeeAuthority";
 
-        private readonly string _outputDeletePrefix = "delete_";
-
         private readonly string _outputUpdatePrefix = "update_";
 
         private readonly int _employeeBodyLineSize = 19;
@@ -66,7 +64,7 @@
                     return string.Empty;
 
                 case "200":
-                    return this._outputDeletePrefix;
+                    return this.OutputDeletePrefix;
 
                 default:
                     return this._outputUpdatePrefix;

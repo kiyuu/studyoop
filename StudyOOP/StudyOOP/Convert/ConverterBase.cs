@@ -13,7 +13,7 @@
 
         private readonly Encoding _outputEncode = Encoding.UTF8;
 
-        private readonly string _outputDeletePrefix = "delete_";
+        protected string OutputDeletePrefix => "delete_";
 
         protected abstract FileSetting FileSetting { get; }
 
@@ -96,7 +96,7 @@
         {
             if (this.GetFunctionType(line) != "10")
             {
-                return this._outputDeletePrefix;
+                return this.OutputDeletePrefix;
             }
 
             return string.Empty;
