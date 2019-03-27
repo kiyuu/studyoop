@@ -44,7 +44,9 @@
         {
             // new StreamReader(Path.Combine(@".\", "input", "rss.xml"), Encoding.UTF8).ReadToEnd()で実装としないこと！！！！！！！！！
             // this.Streamを使用して実装すること
-            throw new NotImplementedException();
+            byte[] bytesData = new byte[this._stream.Length];
+            this._stream.Read(bytesData, 0, bytesData.Length);
+            return this._encoding.GetString(bytesData);
         }
 
         protected virtual void Dispose(bool isDisposing)
