@@ -43,4 +43,9 @@
   <ItemGroup>
     <Folder Include="output\" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="Setting\InstanceInfo.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
