@@ -23,6 +23,13 @@
     <None Remove="output\EmployeeAuthority.tsv" />
     <None Remove="output\Item.tsv" />
     <None Remove="input\WXXX5555.dat" />
+    <None Remove="Setting\InstanceInfo.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Setting\InstanceInfo.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -42,10 +49,5 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="output\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="Setting\InstanceInfo.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 </Project>

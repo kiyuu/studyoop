@@ -2,17 +2,17 @@
 {
     using System;
     using System.Collections.Generic;
-    using StudyOOP.Convert;
-
     using System.IO;
+    using System.Linq;
     using System.Xml.Linq;
+    using StudyOOP.Convert;
 
     public class Program
     {
+        private static Dictionary<string, string> _dicClassInfo = new Dictionary<string, string>();
+
         public static void Main(string[] args)
         {
-            /////var converters = Factory.CreateInstances(InstanceGroupIDs.FlatFileToTsvConverters);
-
             var converters = Factory.CreateInstances("FlatFileToTsvConverters");
 
             foreach (var converter in converters)
@@ -20,39 +20,26 @@
                 converter.Execute();
             }
 
-            ////Factory.CreateInstance(InstanceIDs.EmployeeConverter).Execute();
-            ////Factory.CreateInstance(InstanceIDs.ItemConverter).Execute();
             Factory.CreateInstance("EmployeeConverter").Execute();
             Factory.CreateInstance("ItemConverter").Execute();
         }
 
         public class Factory
         {
-            public static FlatFileToTsvConverterBase[] CreateInstances(string groupid)
+            public static List<FlatFileToTsvConverterBase> CreateInstances(string groupid)
             {
-                FlatFileToTsvConverterBase[] flatFileToTsvConverters = new FlatFileToTsvConverterBase[0];
+                var flatFileToTsvConverters = new List<FlatFileToTsvConverterBase>();
 
                 string sFile = Path.Combine(Directory.GetCurrentDirectory(), "Setting", "InstanceInfo.xml");
 
                 var xdoc = XDocument.Load(sFile);
-
-                var xelements = xdoc.Elements("Extension");
-
-                foreach (var row in xelements)
+                var xelements = xdoc.Elements("Extension").Elements("Group");
                 {
-                    foreach (var item in row.Elements("Group"))
+                    foreach (var row2 in xelements.Elements("Instance"))
                     {
-                        if (item.Attribute("Id").Value == groupid)
-                        {
-                            foreach (var row2 in row.Elements("Instance"))
-                            {
-                                Array.Resize(ref flatFileToTsvConverters, flatFileToTsvConverters.Length + 1);
-
-                                // インスタンス配列を生成
-                                var type = Type.GetType(row2.Attribute("ClassName").Value);
-                                flatFileToTsvConverters[flatFileToTsvConverters.Length - 1] = (FlatFileToTsvConverterBase)Activator.CreateInstance(type);
-                            }
-                        }
+                        // インスタンスを生成
+                        var type = Type.GetType(row2.Attribute("ClassName").Value);
+                        flatFileToTsvConverters.Add((FlatFileToTsvConverterBase)Activator.CreateInstance(type));
                     }
                 }
 
@@ -61,34 +48,25 @@
 
             public static FlatFileToTsvConverterBase CreateInstance(string instanceid)
             {
-                FlatFileToTsvConverterBase flatFileToTsvConverter = null;
-
-                string sFile = Path.Combine(Directory.GetCurrentDirectory(), "Setting", "InstanceInfo.xml");
-
-                var xdoc = XDocument.Load(sFile);
-
-                var xelements = xdoc.Elements("Extension");
-
-                foreach (var row in xelements)
+                if (_dicClassInfo.Count == 0)
                 {
-                    foreach (var item in row.Elements("Instance"))
-                    {
-                        if (item.Attribute("Id").Value == instanceid)
-                        {
-                            // インスタンスを生成
-                            var type = Type.GetType(item.Attribute("ClassName").Value);
-                            flatFileToTsvConverter = (FlatFileToTsvConverterBase)Activator.CreateInstance(type);
-                            break;
-                        }
-                    }
+                    string sFile = Path.Combine(Directory.GetCurrentDirectory(), "Setting", "InstanceInfo.xml");
 
-                    if (flatFileToTsvConverter != null)
+                    var xdoc = XDocument.Load(sFile);
+
+                    var xelements = xdoc.Elements("Extension").Elements("Instance");
+
+                    foreach (var row in xelements)
                     {
-                        break;
+                        _dicClassInfo.Add(row.Attribute("Id").Value, row.Attribute("ClassName").Value);
                     }
                 }
 
-                return flatFileToTsvConverter;
+                _dicClassInfo.TryGetValue(instanceid, out string classname);
+
+                // インスタンスを生成
+                var type = Type.GetType(classname);
+                return (FlatFileToTsvConverterBase)Activator.CreateInstance(type);
             }
         }
     }
