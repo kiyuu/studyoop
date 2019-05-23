@@ -1,6 +1,7 @@
 ﻿namespace StudyOOP
 {
     using System.Collections.Generic;
+    using StudyOOP.Common;
     using StudyOOP.Convert;
 
     public class Program
@@ -9,10 +10,9 @@
         {
             var converters = new List<FlatFileToTsvConverterBase>()
                 {
-                    new WXXX5555ToEmployeeTSVConverter(),
-                    new WXXX6666ToItemTSVConverter()
+                    Factory.CreateInstance(ID.IDEmployee),
+                    Factory.CreateInstance(ID.IDItem)
                 };
-
             converters.ForEach(c => c.Execute());
         }
     }
