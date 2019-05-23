@@ -2,25 +2,23 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Reflection;
     using System.Text;
     using StudyOOP.Convert;
 
     internal static class Factory
     {
-        public static FlatFileToTsvConverterBase CreateInstance(string fileType)
+        public static FlatFileToTsvConverterBase[] Createinstances(InstanceGroupID instanceGroupID)
         {
-            if (fileType == ID.IDEmployee)
+            FlatFileToTsvConverterBase[] listret = new FlatFileToTsvConverterBase[instanceGroupID.InstanceIds.Length];
+            var count = 0;
+            foreach (var id in instanceGroupID.InstanceIds)
             {
-                return new WXXX5555ToEmployeeTSVConverter();
+                listret[count] = (FlatFileToTsvConverterBase)Activator.CreateInstance(Type.GetType(id.ClassName));
+                count += 1;
             }
-            else if (fileType == ID.IDItem)
-            {
-                return new WXXX6666ToItemTSVConverter();
-            }
-            else
-            {
-                return null;
-            }
+
+            return listret;
         }
     }
 }
