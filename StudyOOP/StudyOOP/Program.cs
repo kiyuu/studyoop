@@ -1,13 +1,24 @@
 ﻿namespace StudyOOP
 {
-    using StudyOOP.Convert;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
 
-    public class Program
+    /// <summary>
+    /// Mainメソッドの中身から実行される
+    /// </summary>
+    internal class Program
     {
-        public static void Main(string[] args)
+        /// <summary>
+        /// エントリーポイント
+        /// </summary>
+        /// <param name="args">引数</param>
+        private static void Main(string[] args)
         {
-            Converter.ConvertWXXX5555ToEmployeeTSV();
-            Converter.ConvertWXXX6666ToItemTSV();
+            Converter.WXXX5555DatToTsvConverter();
+            Converter.WXXX6666DatToTsvConverter();
         }
     }
 }
