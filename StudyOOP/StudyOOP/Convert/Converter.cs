@@ -1,87 +1,75 @@
-﻿namespace StudyOOP.Convert
+﻿namespace StudyOOP
 {
     using System;
     using System.IO;
     using System.Linq;
     using System.Text;
-    using StudyOOP.Common;
 
-    public static class Converter
+    /// <summary>
+    /// datファイルをtsvに変換
+    /// </summary>
+    internal class Convert
     {
-        private static readonly Encoding _inputEncode = Encoding.UTF8;
+        private static readonly string InputEmployeeFileName = "WXXX5555";
+        private static readonly string Prifix = "delete_";
+        private static readonly string InputItemFileName = "WXXX6666";
 
-        private static readonly Encoding _outputEncode = Encoding.UTF8;
-
-        private static readonly string _outputDeletePrefix = "delete_";
-
-        private static readonly string _inputEmployeeFileName = "WXXX5555";
-
-        private static readonly string _outputEmployeeFileName = "Employee";
-
-        private static readonly string _outputEmployeeAuthorityFileName = "EmployeeAuthority";
-
-        private static readonly int _employeeBodyLineSize = 18;
-
-        private static readonly string _inputItemFileName = "WXXX6666";
-
-        private static readonly string _outputItemFileName = "Item";
-
-        private static readonly int _itemBodyLineSize = 35;
-
-        public static void ConvertWXXX5555ToEmployeeTSV()
+        /// <summary>
+        /// WXXX555をemployeeに変換
+        /// </summary>
+        public static void ConvertWXXX5555Employee()
         {
-            if (!Directory.Exists(Settings.InputDirectory))
+            if (!Directory.Exists(Setting.InputDirectory))
             {
                 return;
             }
 
             try
             {
-                if (!Directory.Exists(Settings.OutputDirectory))
+                if (!Directory.Exists(Setting.OutputDirectory))
                 {
-                    Directory.CreateDirectory(Settings.OutputDirectory);
+                    Directory.CreateDirectory(Setting.OutputDirectory);
                 }
 
-                foreach (var filePath in Directory.EnumerateFiles(Settings.InputDirectory))
+                foreach (var files in Directory.EnumerateFiles(Setting.InputDirectory))
                 {
-                    if (!Path.GetExtension(filePath).Equals(Settings.InputFileExtension, StringComparison.OrdinalIgnoreCase))
+                    if (!Path.GetExtension(files).Equals(Setting.InputExtension, StringComparison.OrdinalIgnoreCase))
                     {
                         continue;
                     }
 
-                    if (!Path.GetFileNameWithoutExtension(filePath).Equals(_inputEmployeeFileName, StringComparison.OrdinalIgnoreCase))
+                    if (!Path.GetFileNameWithoutExtension(files).Equals(InputEmployeeFileName, StringComparison.OrdinalIgnoreCase))
                     {
                         continue;
                     }
 
-                    var lines = File.ReadLines(filePath, _inputEncode);
-
-                    var headerLine = lines.FirstOrDefault();
-                    if (headerLine == null)
+                    var lines = File.ReadAllLines(files, Encoding.UTF8);
+                    var headerline = lines.FirstOrDefault();
+                    if (headerline == null)
                     {
                         continue;
                     }
 
-                    if (!headerLine.Trim().Equals(_inputEmployeeFileName, StringComparison.OrdinalIgnoreCase))
+                    if (headerline != InputEmployeeFileName.Trim())
                     {
                         continue;
                     }
 
                     foreach (var line in lines.Skip(1))
                     {
-                        // 全角文字ない前提
-                        if (line.Length != _employeeBodyLineSize)
+                        if (line.Length != 18)
                         {
                             continue;
                         }
 
                         var index = 0;
                         var length = 2;
-                        var functionType = line.Substring(index, length);
-                        index += length;
+                        var function = line.Substring(index, length);
+                        index = index + length;
 
                         length = 5;
-                        if (!int.TryParse(line.Substring(index, length), out int code))
+                        int code;
+                        if (!int.TryParse(line.Substring(index, length), out code))
                         {
                             continue;
                         }
@@ -96,19 +84,19 @@
                         var authority = line.Substring(index, length);
                         index += length;
 
-                        var employeeLine = string.Join(Settings.TsvSeparater, code.ToString().PadLeft(5, '0'), name.Trim()) + Environment.NewLine;
-                        var employeeAuthority = string.Join(Settings.TsvSeparater, code.ToString().PadLeft(5, '0'), authority) + Environment.NewLine;
+                        var employeeLine = string.Join(Setting.Separation, code.ToString().PadLeft(5, '0'), name.Trim()) + Environment.NewLine;
+                        var employeeAuthorityline = string.Join(Setting.Separation, code.ToString().PadLeft(5, '0'), authority) + Environment.NewLine;
 
-                        var outputEmployeeFileName = _outputEmployeeFileName + Settings.OutputFileExtension;
-                        var outputEmployeeAuthorityFileName = _outputEmployeeAuthorityFileName + Settings.OutputFileExtension;
-                        if (functionType != "10")
+                        var outputEmployeeFileName = "Employee" + Setting.OutputExtension;
+                        var outputEmployeeAuthorityFileName = "EmployeeAuthority" + Setting.OutputExtension;
+                        if (function != "10")
                         {
-                            outputEmployeeFileName = _outputDeletePrefix + outputEmployeeFileName;
-                            outputEmployeeAuthorityFileName = _outputDeletePrefix + outputEmployeeAuthorityFileName;
+                            outputEmployeeFileName = Prifix + outputEmployeeFileName;
+                            outputEmployeeAuthorityFileName = Prifix + outputEmployeeAuthorityFileName;
                         }
 
-                        File.AppendAllText(Path.Combine(Settings.OutputDirectory, outputEmployeeFileName), employeeLine, _outputEncode);
-                        File.AppendAllText(Path.Combine(Settings.OutputDirectory, outputEmployeeAuthorityFileName), employeeAuthority, _outputEncode);
+                        File.AppendAllText(Path.Combine(Setting.OutputDirectory, outputEmployeeFileName), employeeLine, Encoding.UTF8);
+                        File.AppendAllText(Path.Combine(Setting.OutputDirectory, outputEmployeeAuthorityFileName), employeeAuthorityline, Encoding.UTF8);
                     }
                 }
             }
@@ -118,60 +106,62 @@
             }
         }
 
-        public static void ConvertWXXX6666ToItemTSV()
+        /// <summary>
+        /// WXXX666をitemに変換
+        /// </summary>
+        public static void ConvertWXXX6666item()
         {
-            if (!Directory.Exists(Settings.InputDirectory))
+            if (!Directory.Exists(Setting.InputDirectory))
             {
                 return;
             }
 
             try
             {
-                if (!Directory.Exists(Settings.OutputDirectory))
+                if (!Directory.Exists(Setting.OutputDirectory))
                 {
-                    Directory.CreateDirectory(Settings.OutputDirectory);
+                    Directory.CreateDirectory(Setting.OutputDirectory);
                 }
 
-                foreach (var filePath in Directory.EnumerateFiles(Settings.InputDirectory))
+                foreach (var files in Directory.EnumerateFiles(Setting.InputDirectory))
                 {
-                    if (!Path.GetExtension(filePath).Equals(Settings.InputFileExtension, StringComparison.OrdinalIgnoreCase))
+                    if (!Path.GetExtension(files).Equals(Setting.InputExtension, StringComparison.OrdinalIgnoreCase))
                     {
                         continue;
                     }
 
-                    if (!Path.GetFileNameWithoutExtension(filePath).Equals(_inputItemFileName, StringComparison.OrdinalIgnoreCase))
+                    if (!Path.GetFileNameWithoutExtension(files).Equals(InputItemFileName, StringComparison.OrdinalIgnoreCase))
                     {
                         continue;
                     }
 
-                    var lines = File.ReadLines(filePath, _inputEncode);
-
-                    var headerLine = lines.FirstOrDefault();
-                    if (headerLine == null)
+                    var lines = File.ReadAllLines(files, Encoding.UTF8);
+                    var headerline = lines.FirstOrDefault();
+                    if (headerline == null)
                     {
                         continue;
                     }
 
-                    if (!headerLine.Trim().Equals(_inputItemFileName, StringComparison.OrdinalIgnoreCase))
+                    if (headerline != InputItemFileName.Trim())
                     {
                         continue;
                     }
 
                     foreach (var line in lines.Skip(1))
                     {
-                        // 全角文字ない前提
-                        if (line.Length != _itemBodyLineSize)
+                        if (line.Length != 35)
                         {
                             continue;
                         }
 
                         var index = 0;
                         var length = 2;
-                        var functionType = line.Substring(index, length);
+                        var function = line.Substring(index, length);
                         index += length;
 
                         length = 13;
-                        if (!long.TryParse(line.Substring(index, length), out long code))
+                        long code;
+                        if (!long.TryParse(line.Substring(index, length), out code))
                         {
                             continue;
                         }
@@ -183,22 +173,22 @@
                         index += length;
 
                         length = 10;
-                        if (!decimal.TryParse(line.Substring(index, length), out decimal unitPrice))
+                        decimal price;
+                        if (!decimal.TryParse(line.Substring(index, length), out price))
                         {
                             continue;
                         }
 
                         index += length;
 
-                        var itemLine = string.Join(Settings.TsvSeparater, code.ToString().PadLeft(13, '0'), name.Trim(), unitPrice) + Environment.NewLine;
-
-                        var outputItemFileName = _outputItemFileName + Settings.OutputFileExtension;
-                        if (functionType != "10")
+                        var itemLine = string.Join(Setting.Separation, code.ToString().PadLeft(13, '0'), name.Trim(), price) + Environment.NewLine;
+                        var outputItemFileName = "Item" + Setting.OutputExtension;
+                        if (function != "10")
                         {
-                            outputItemFileName = _outputDeletePrefix + outputItemFileName;
+                            outputItemFileName = Prifix + outputItemFileName;
                         }
 
-                        File.AppendAllText(Path.Combine(Settings.OutputDirectory, outputItemFileName), itemLine, _outputEncode);
+                        File.AppendAllText(Path.Combine(Setting.OutputDirectory, outputItemFileName), itemLine, Encoding.UTF8);
                     }
                 }
             }
