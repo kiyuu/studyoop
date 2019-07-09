@@ -17,8 +17,8 @@
         /// <param name="args">引数</param>
         private static void Main(string[] args)
         {
-            Converter.WXXX5555DatToTsvConverter();
-            Converter.WXXX6666DatToTsvConverter();
+            Converter.ConvertToTsv(FlatFileType.WXXX5555);
+            Converter.ConvertToTsv(FlatFileType.WXXX6666);
         }
     }
 }

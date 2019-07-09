@@ -8,8 +8,8 @@
     internal class Settings
     {
         private static readonly string _inputExtension = ".dat";
-        private static string outputExtension = ".tsv";
-        private static string tabSeparator = "\t";
+        private static readonly string _outputExtension = ".tsv";
+        private static readonly string _tabSeparator = "\t";
 
         /// <summary>
         /// inputディレクトリへのパス
@@ -39,7 +39,7 @@
         {
             get
             {
-                return outputExtension;
+                return _outputExtension;
             }
         }
 
@@ -50,7 +50,7 @@
         {
             get
             {
-                return tabSeparator;
+                return _tabSeparator;
             }
         }
     }
