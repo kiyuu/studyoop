@@ -3,33 +3,33 @@
     using System.IO;
 
     /// <summary>
-    /// Setting
+    /// Settingクラス
     /// </summary>
-    internal static class Setting
+    internal static class Settings
     {
         /// <summary>
-        /// GEtsinputパス作成
+        /// Gets inputパス作成
         /// </summary>
-        internal static string InputDirectory { get; private set; } = Path.Combine(".", "input");
+        internal static string InputDirectory { get; } = Path.Combine(".", "input");
 
         /// <summary>
-        /// GEtsoutputパス作成
+        /// Gets outputパス作成
         /// </summary>
-        internal static string OutputDirectory { get; private set; } = Path.Combine(".", "output");
+        internal static string OutputDirectory { get; } = Path.Combine(".", "output");
 
         /// <summary>
-        /// GEts拡張子.dat
+        /// Gets 拡張子.dat
         /// </summary>
-        internal static string InputExtension { get; private set; } = ".dat";
+        internal static string InputExtension { get; } = ".dat";
 
         /// <summary>
-        /// GEts拡張子.tsv
+        /// Gets 拡張子.tsv
         /// </summary>
-        internal static string OutputExtension { get; private set; } = ".tsv";
+        internal static string OutputExtension { get; } = ".tsv";
 
         /// <summary>
-        /// GEtsタブ区切り
+        /// Gets タブ区切り
         /// </summary>
-        internal static string Separation { get; private set; } = "\t";
+        internal static string Separation { get; } = "\t";
     }
 }

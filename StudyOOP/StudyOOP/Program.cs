@@ -12,13 +12,13 @@
     internal class Program
     {
         /// <summary>
-        /// メイン
+        /// メインメソッド
         /// </summary>
         /// <param name="args">main</param>
         internal static void Main(string[] args)
         {
-            Convert.ConvertWXXX5555Employee();
-            Convert.ConvertWXXX6666item();
+            Converter.ConvertToTsv(Converter.FlatFileType.WXXX5555);
+            Converter.ConvertToTsv(Converter.FlatFileType.WXXX6666);
         }
     }
 }
