@@ -17,8 +17,16 @@
         /// <param name="args">main</param>
         internal static void Main(string[] args)
         {
-            Converter.ConvertToTsv(Converter.FlatFileType.WXXX5555);
-            Converter.ConvertToTsv(Converter.FlatFileType.WXXX6666);
+            var convertlist = new List<Converter>()
+            {
+                new WXXX5555ToEmployeeConverter(),
+                new WXXX6666ToItemConverter(),
+            };
+
+            foreach (var result in convertlist)
+            {
+                result.Excute();
+            }
         }
     }
 }
