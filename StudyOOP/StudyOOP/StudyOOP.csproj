@@ -46,7 +46,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\Settings.cs" />
-    <Compile Include="Convert\Converter.cs" />
+    <Compile Include="Common\ConvertedRecordInfo.cs" />
+    <Compile Include="Convert\ConvertWXXX6666ToTsv.cs" />
+    <Compile Include="Convert\FlatFileToTsvConverterBase.cs" />
+    <Compile Include="Convert\ConvertWXXX5555ToTsv.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -58,6 +61,7 @@
     <Content Include="input\WXXX6666.dat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="output\_output" />
     <None Include="packages.config" />
     <None Include="stylecop.json" />
   </ItemGroup>

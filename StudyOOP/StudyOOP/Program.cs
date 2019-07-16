@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
@@ -17,8 +18,15 @@
         /// <param name="args">引数</param>
         private static void Main(string[] args)
         {
-            Converter.ConvertToTsv(FlatFileType.WXXX5555);
-            Converter.ConvertToTsv(FlatFileType.WXXX6666);
+            var converters = new List<FlatFileToTsvConverterBase>()
+            {
+                new ConvertWXXX5555ToTsv(),
+                new ConvertWXXX6666ToTsv(),
+            };
+            foreach (var s in converters)
+            {
+                s.Execute();
+            }
         }
     }
 }
