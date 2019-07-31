@@ -8,17 +8,15 @@ namespace StudyOOP
 {
     public class Factory
     {
-        public static Converter CreateInstance(string id)
+        public static Converter[] CreateInstance()
         {
-            switch (id)
+            Converter[] converter =
             {
-                case "WXXX5555":
-                    return new WXXX5555ToEmployeeConverter();
-                case "WXXX6666":
-                    return new WXXX6666ToItemConverter();
-                default:
-                    throw new ArgumentException();
-            }
+                new WXXX5555ToEmployeeConverter(),
+                new WXXX6666ToItemConverter(),
+            };
+
+            return converter;
         }
     }
 }

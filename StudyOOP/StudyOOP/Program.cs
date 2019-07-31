@@ -17,10 +17,11 @@
         /// <param name="args">main</param>
         internal static void Main(string[] args)
         {
-            Converter converter1 = Factory.CreateInstance("WXXX5555");
-            Converter converter2 = Factory.CreateInstance("WXXX6666");
-            converter1.Excute();
-            converter2.Excute();
+            var converter = Factory.CreateInstance();
+            foreach (var c in converter)
+            {
+                c.Excute();
+            }
         }
     }
 }
