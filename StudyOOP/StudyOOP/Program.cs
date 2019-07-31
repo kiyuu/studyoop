@@ -17,7 +17,7 @@
         /// <param name="args">main</param>
         internal static void Main(string[] args)
         {
-            var converter = Factory.CreateInstance();
+            var converter = Factory.CreateInstances();
             foreach (var c in converter)
             {
                 c.Excute();
