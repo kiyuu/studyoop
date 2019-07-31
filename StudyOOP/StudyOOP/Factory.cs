@@ -8,19 +8,14 @@
 
     public class Factory
     {
-        public static FlatFileToTsvConverterBase CreateInstance(string fileName)
+        public static FlatFileToTsvConverterBase[] CreateInstances()
         {
-            switch (fileName)
-            {
-                case "WXXX5555":
-                    return new ConvertWXXX5555ToTsv();
-
-                case "WXXX6666":
-                    return new ConvertWXXX6666ToTsv();
-
-                default:
-                    throw new ArgumentException();
-            }
+            FlatFileToTsvConverterBase[] files = new FlatFileToTsvConverterBase[]
+                {
+                    new ConvertWXXX5555ToTsv(),
+                    new ConvertWXXX6666ToTsv()
+                };
+            return files;
         }
     }
 }

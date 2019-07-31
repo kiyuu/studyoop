@@ -19,11 +19,12 @@
         private static void Main(string[] args)
         {
 
-            FlatFileToTsvConverterBase file1 = Factory.CreateInstance("WXXX5555");
-            FlatFileToTsvConverterBase file2 = Factory.CreateInstance("WXXX6666");
+            var files = Factory.CreateInstances();
 
-            file1.Execute();
-            file2.Execute();
+            foreach (var f in files)
+            {
+                f.Execute();
+            }
         }
     }
 }

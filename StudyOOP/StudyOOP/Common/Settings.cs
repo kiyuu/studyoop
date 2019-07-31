@@ -3,7 +3,7 @@
     using System.IO;
 
     /// <summary>
-    /// Converter.csで呼び出すプロパティが入ったクラス
+    /// 呼び出すプロパティが入ったクラス
     /// </summary>
     internal class Settings
     {
