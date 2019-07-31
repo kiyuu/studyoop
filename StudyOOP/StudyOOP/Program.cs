@@ -17,16 +17,10 @@
         /// <param name="args">main</param>
         internal static void Main(string[] args)
         {
-            var convertlist = new List<Converter>()
-            {
-                new WXXX5555ToEmployeeConverter(),
-                new WXXX6666ToItemConverter(),
-            };
-
-            foreach (var result in convertlist)
-            {
-                result.Excute();
-            }
+            Converter converter1 = Factory.CreateInstance("WXXX5555");
+            Converter converter2 = Factory.CreateInstance("WXXX6666");
+            converter1.Excute();
+            converter2.Excute();
         }
     }
 }

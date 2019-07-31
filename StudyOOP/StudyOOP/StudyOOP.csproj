@@ -48,6 +48,7 @@
     <Compile Include="Common\Settings.cs" />
     <Compile Include="Common\ConvertedRecordInfo.cs" />
     <Compile Include="Convert\Converter.cs" />
+    <Compile Include="Factory.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Convert\WXXX5555ToEmployeeConverter.cs" />
@@ -62,7 +63,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="packages.config" />
-    <None Include="stylecop.json" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
