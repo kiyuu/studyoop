@@ -9,7 +9,7 @@
     /// <summary>
     /// WXXX5555.datとWXXX6666.datをそれぞれ.tsv形式に変換するメソッドを持つクラス
     /// </summary>
-    internal abstract class FlatFileToTsvConverterBase
+    public abstract class FlatFileToTsvConverterBase
     {
         private static readonly Encoding Encode = Encoding.UTF8;
 

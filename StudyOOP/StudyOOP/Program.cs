@@ -18,15 +18,12 @@
         /// <param name="args">引数</param>
         private static void Main(string[] args)
         {
-            var converters = new List<FlatFileToTsvConverterBase>()
-            {
-                new ConvertWXXX5555ToTsv(),
-                new ConvertWXXX6666ToTsv(),
-            };
-            foreach (var s in converters)
-            {
-                s.Execute();
-            }
+
+            FlatFileToTsvConverterBase file1 = Factory.CreateInstance("WXXX5555");
+            FlatFileToTsvConverterBase file2 = Factory.CreateInstance("WXXX6666");
+
+            file1.Execute();
+            file2.Execute();
         }
     }
 }

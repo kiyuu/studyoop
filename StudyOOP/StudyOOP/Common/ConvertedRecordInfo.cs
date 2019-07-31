@@ -9,7 +9,7 @@
     /// <summary>
     /// 配列に格納して使う、2つのフィールドを戻り値として返すためのクラス
     /// </summary>
-    internal class ConvertedRecordInfo
+    public class ConvertedRecordInfo
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ConvertedRecordInfo"/> class.

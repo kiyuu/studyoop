@@ -50,6 +50,7 @@
     <Compile Include="Convert\ConvertWXXX6666ToTsv.cs" />
     <Compile Include="Convert\FlatFileToTsvConverterBase.cs" />
     <Compile Include="Convert\ConvertWXXX5555ToTsv.cs" />
+    <Compile Include="Factory.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
