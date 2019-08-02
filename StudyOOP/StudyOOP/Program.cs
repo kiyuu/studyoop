@@ -6,6 +6,7 @@
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using StudyOOP.Common;
 
     /// <summary>
     /// Mainメソッドの中身から実行される
@@ -18,12 +19,9 @@
         /// <param name="args">引数</param>
         private static void Main(string[] args)
         {
-
-            var files = Factory.CreateInstances();
-
-            foreach (var f in files)
+            foreach (var files in Factory.CreateInstances(InstanceGroupIDs.FlatFileToTsvConverters))
             {
-                f.Execute();
+                files.Execute();
             }
         }
     }

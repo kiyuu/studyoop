@@ -11,14 +11,14 @@
     /// </summary>
     public abstract class FlatFileToTsvConverterBase
     {
-        private static readonly Encoding Encode = Encoding.UTF8;
-
-        private static readonly string OutputFileNamePrefix = "delete_";
-
         /// <summary>
         /// 子クラスで2回目から文字列を分解する時の開始点(1回目は共通)
         /// </summary>
         protected static readonly int SecondIndex = 2;
+
+        private static readonly Encoding Encode = Encoding.UTF8;
+
+        private static readonly string OutputFileNamePrefix = "delete_";
 
         /// <summary>
         /// 従業員用ファイル(変換前)の文字列の長さを取得するプロパティ(抽象メソッド)

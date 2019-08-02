@@ -51,6 +51,11 @@
     <Compile Include="Convert\FlatFileToTsvConverterBase.cs" />
     <Compile Include="Convert\ConvertWXXX5555ToTsv.cs" />
     <Compile Include="Factory.cs" />
+    <Compile Include="IDBase.cs" />
+    <Compile Include="InstanceGroupID.cs" />
+    <Compile Include="InstanceGroupIDs.cs" />
+    <Compile Include="InstanceID.cs" />
+    <Compile Include="InstanceIDs.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
