@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using StudyOOP.Common;
 
     /// <summary>
     /// 変換するプログラム
@@ -17,7 +18,7 @@
         /// <param name="args">main</param>
         internal static void Main(string[] args)
         {
-            var converter = Factory.CreateInstances();
+            var converter = Factory.CreateInstances(InstanceGroupIDs.FlatFileToTsvConverters);
             foreach (var c in converter)
             {
                 c.Excute();

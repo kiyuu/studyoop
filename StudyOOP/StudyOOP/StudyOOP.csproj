@@ -45,6 +45,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\IDBase.cs" />
+    <Compile Include="Common\InstanceGroupID.cs" />
+    <Compile Include="Common\InstanceGroupIDs.cs" />
+    <Compile Include="Common\InstanceID.cs" />
+    <Compile Include="Common\InstanceIDs.cs" />
     <Compile Include="Common\Settings.cs" />
     <Compile Include="Common\ConvertedRecordInfo.cs" />
     <Compile Include="Convert\Converter.cs" />
