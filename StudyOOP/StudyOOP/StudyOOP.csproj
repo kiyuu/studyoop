@@ -60,6 +60,10 @@
     <Compile Include="Convert\WXXX6666ToItemConverter.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="instanceInfo.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="App.config" />
     <Content Include="input\WXXX5555.dat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

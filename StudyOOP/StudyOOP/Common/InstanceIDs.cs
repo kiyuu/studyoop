@@ -14,11 +14,11 @@ namespace StudyOOP.Common
         /// <summary>
         /// EmployeeConverterクラス情報
         /// </summary>
-        public static InstanceID EmployeeConverter => new InstanceID(nameof(EmployeeConverter), "StudyOOP.WXXX5555ToEmployeeConverter");
+        public static InstanceID EmployeeConverter => new InstanceID(nameof(EmployeeConverter));
 
         /// <summary>
         /// ItemConverterクラス情報
         /// </summary>
-        public static InstanceID ItemConverter => new InstanceID(nameof(ItemConverter), "StudyOOP.WXXX6666ToItemConverter");
+        public static InstanceID ItemConverter => new InstanceID(nameof(ItemConverter));
     }
 }

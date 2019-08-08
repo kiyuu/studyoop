@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Extension>
+  <Instance
+    Id="EmployeeConverter"
+    ClassName="StudyOOP.WXXX5555ToEmployeeConverter"/>
+  <Instance
+    Id="ItemConverter"
+    ClassName="StudyOOP.WXXX6666ToItemConverter"/>
+  <Group
+    Id="FlatFileToTsvConverters">
+    <Instance
+      Id="EmployeeConverter"
+      ClassName="StudyOOP.WXXX5555ToEmployeeConverter"/>
+    <Instance
+      Id="ItemConverter"
+      ClassName="StudyOOP.WXXX6666ToItemConverter"/>
+  </Group>
+  <Group
+      Id="FlatFileToTsvConverters2">
+    <Instance
+      Id="EmployeeConverter"
+      ClassName="StudyOOP.WXXX5555ToEmployeeConverter"/>
+    <Instance
+      Id="ItemConverter"
+      ClassName="StudyOOP.WXXX6666ToItemConverter"/>
+  </Group>
+</Extension>

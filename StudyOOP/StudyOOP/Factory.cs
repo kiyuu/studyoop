@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using StudyOOP.Common;
 
 namespace StudyOOP
@@ -13,31 +14,38 @@ namespace StudyOOP
     public class Factory
     {
         /// <summary>
-        /// キャストしたものを配列にするメソッド
+        /// XMLを読み取ってインスタンス化して配列にするメソッド
         /// </summary>
-        /// <param name = "instanceGroupID" > instanceGroupID </param >
-        /// <returns > 作成した配列 </returns >
+        /// <param name="instanceGroupID">instanceGroupID</param>
+        /// <returns>インスタンス化したものの配列</returns>
         public static Converter[] CreateInstances(InstanceGroupID instanceGroupID)
-        {
-            var instance = new List<Converter>();
-            foreach (var c in instanceGroupID.InstanceIds)
+        {         
+            var xmlDoc = new XmlDocument();
+            xmlDoc.Load(@"instanceInfo.xml");
+            var instance = xmlDoc.SelectNodes($"Extension/Group[@Id='{instanceGroupID.Id}']/Instance");
+
+            var converter = new List<Converter> { };
+            
+            foreach (XmlNode emp in instance)
             {
-                var converter = CreateInstance(c);
-                instance.Add(converter);
+                var className = emp.Attributes["ClassName"].InnerText;
+                var obj = CreateInstance(className);
+                Converter instanceClass = (Converter)obj;
+                converter.Add(instanceClass);
             }
 
-            Converter[] array = instance.ToArray();
+            Converter[] array = converter.ToArray();
             return array;
         }
 
         /// <summary>
         /// 生成したオブジェクトをキャストするメソッド
         /// </summary>
-        /// <param name="instancesID">instancesID</param>
+        /// <param name="instanceID">instanceID</param>
         /// <returns>キャスト結果</returns>
-        public static Converter CreateInstance(InstanceID instancesID)
+        public static Converter CreateInstance(InstanceID instanceID)
         {
-            var obj = CreateInstance(instancesID.ClassName);
+            var obj = CreateInstance(instanceID.Id);
             Converter converter = (Converter)obj;
             return converter;
         }

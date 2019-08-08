@@ -16,16 +16,9 @@ namespace StudyOOP.Common
         /// コンストラクタ
         /// </summary>
         /// <param name="id">id</param>
-        /// <param name="instanceIds">instanceId情報の配列</param>
-        public InstanceGroupID(string id, InstanceID[] instanceIds)
+        public InstanceGroupID(string id)
            : base(id)
         {
-            this.InstanceIds = instanceIds;
         }
-
-        /// <summary>
-        /// 読み取り専用InstanceIDの配列
-        /// </summary>
-        public InstanceID[] InstanceIds { get; }
     }
 }

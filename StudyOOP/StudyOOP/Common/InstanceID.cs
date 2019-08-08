@@ -16,16 +16,9 @@ namespace StudyOOP.Common
         /// コンストラクタ
         /// </summary>
         /// <param name="id">id</param>
-        /// <param name="className">cクラス名</param>
-        public InstanceID(string id, string className)
+        public InstanceID(string id)
             : base(id)
-        {
-            this.ClassName = className;
-        }
-
-        /// <summary>
-        /// 読み取り専用クラス名
-        /// </summary>
-        public string ClassName { get; }
+        {           
+        }         
     }
 }

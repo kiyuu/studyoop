@@ -14,9 +14,6 @@ namespace StudyOOP.Common
         /// <summary>
         /// 配列作成
         /// </summary>
-        public static InstanceGroupID FlatFileToTsvConverters =>
-           new InstanceGroupID(
-               nameof(FlatFileToTsvConverters),
-               new InstanceID[] { InstanceIDs.EmployeeConverter, InstanceIDs.ItemConverter });
+        public static InstanceGroupID FlatFileToTsvConverters => new InstanceGroupID(nameof(FlatFileToTsvConverters));               
     }
 }
