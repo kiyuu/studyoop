@@ -24,6 +24,10 @@
             {
                 fileConverters.Execute();
             }
+
+            //以下の形で呼べるようにする
+            ////Factory.CreateInstance(InstanceIDs.EmployeeConverter);
+            ////Factory.CreateInstance(InstanceIDs.ItemConverter);
         }
     }
 }

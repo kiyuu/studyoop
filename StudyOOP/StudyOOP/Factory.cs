@@ -35,6 +35,27 @@
         }
 
         /// <summary>
+        /// xmlから読み取ったInstanceIDに入っているclassNameと同じ名前のクラスをインスタンス化返すメソッド
+        /// </summary>
+        /// <param name="instanceId">InstanceGroupIDクラスのプロパティ</param>
+        /// <returns>インスタンス化させたクラスが入った配列</returns>
+        public static FlatFileToTsvConverterBase CreateInstance(InstanceID instanceId)
+        {
+            var xml = new XmlDocument();
+            xml.Load(@"./instanceInfo.xml");
+            var instanceInfo = xml.SelectNodes($"Extension/Instance[@Id='{instanceId.Id}']");
+
+            if (instanceInfo.Count == 0)
+            {
+                throw new Exception("instanceId not found");
+            }
+
+            var className = instanceInfo.Item(0).Attributes["ClassName"].InnerText;
+
+            return (FlatFileToTsvConverterBase)CreateInstance(className);
+        }
+
+        /// <summary>
         /// クラス名を渡してobject型でインスタンスを生成するメソッド
         /// </summary>
         /// <param name="className">インスタンス化させるクラス名</param>
