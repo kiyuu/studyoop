@@ -19,17 +19,15 @@ namespace StudyOOP
         /// <returns > 作成した配列 </returns >
         public static Converter[] CreateInstances(InstanceGroupID instanceGroupID)
         {
-            var instance = new Converter[] { };
-
-            int i = 0;
-            foreach (var id in instanceGroupID.InstanceIds)
+            var instance = new List<Converter>();
+            foreach (var c in instanceGroupID.InstanceIds)
             {
-                Array.Resize(ref instance, i + 1);
-                instance[i] = CreateInstance(id);
-                i++;
+                var converter = CreateInstance(c);
+                instance.Add(converter);
             }
 
-            return instance;
+            Converter[] array = instance.ToArray();
+            return array;
         }
 
         /// <summary>
