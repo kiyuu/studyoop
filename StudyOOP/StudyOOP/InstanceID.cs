@@ -10,16 +10,9 @@
         /// コンストラクタ
         /// </summary>
         /// <param name="id">ID</param>
-        /// <param name="className">クラス名</param>
-        public InstanceID(string id, string className)
+        public InstanceID(string id)
             : base(id)
         {
-            this.ClassName = className;
         }
-
-        /// <summary>
-        /// プロパティ
-        /// </summary>
-        public string ClassName { get; }
     }
 }

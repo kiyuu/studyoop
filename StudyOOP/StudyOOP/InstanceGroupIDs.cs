@@ -8,9 +8,6 @@
         /// <summary>
         /// インスタンス化させたいクラスのIDが入った配列とそれに紐づくIDを持つクラスを取得するプロパティ
         /// </summary>
-        public static InstanceGroupID FlatFileToTsvConverters =>
-            new InstanceGroupID(
-                nameof(FlatFileToTsvConverters),
-                new InstanceID[] { InstanceIDs.EmployeeConverter, InstanceIDs.ItemConverter });
+        public static InstanceGroupID FlatFileToTsvConverters => new InstanceGroupID(nameof(FlatFileToTsvConverters));
     }
 }

@@ -1,11 +1,8 @@
 ﻿namespace StudyOOP
 {
-    using Common;
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
+    using System.Xml;
+    using StudyOOP.Common;
 
     /// <summary>
     /// インスタンスの生成を行うメソッドが入ったクラス
@@ -13,33 +10,28 @@
     public class Factory
     {
         /// <summary>
-        /// CreateInstance(string fileName)を呼び出してインスタンス化したクラスを配列に入れて返すメソッド
+        /// xmlから読み取ったGroupIDに入っているclassNameと同じ名前のクラスをインスタンス化させて配列に格納して返すメソッド
         /// </summary>
-        /// <param name="instanceGroupID">インスタンスが入った配列と紐づくID</param>
-        /// <returns>インスタンス化したクラスが入った配列</returns>
-        public static FlatFileToTsvConverterBase[] CreateInstances(InstanceGroupID instanceGroupID)
+        /// <param name="instanceGroupId">InstanceGroupIDクラスのプロパティ</param>
+        /// <returns>インスタンス化させたクラスが入った配列</returns>
+        public static FlatFileToTsvConverterBase[] CreateInstances(InstanceGroupID instanceGroupId)
         {
-            var files = new FlatFileToTsvConverterBase[instanceGroupID.InstanceIds.Length];
+            var xml = new XmlDocument();
+            xml.Load(@"./instanceInfo.xml");
+            var instances = xml.SelectNodes($"Extension/Group[@Id='{instanceGroupId.Id}']/Instance");
 
-            int i = 0;
-            foreach (var id in instanceGroupID.InstanceIds)
+            var converters = new FlatFileToTsvConverterBase[instances.Count];
+            var i = 0;
+
+            foreach (XmlNode instance in instances)
             {
-                files[i] = CreateInstance(id);
+                var className = instance.Attributes["ClassName"].InnerText;
+                var obj = CreateInstance(className);
+                converters[i] = (FlatFileToTsvConverterBase)obj;
                 i++;
             }
 
-            return files;
-        }
-
-        /// <summary>
-        /// CreateInstance(string className)で生成したインスタンスをFlatFileToTsvConverterBase型にキャストするメソッド
-        /// </summary>
-        /// <param name="instanceID">キャストさせるインスタンスと紐づくID</param>
-        /// <returns>キャスト後のインスタンス</returns>
-        public static FlatFileToTsvConverterBase CreateInstance(InstanceID instanceID)
-        {
-            var flatFile = (FlatFileToTsvConverterBase)CreateInstance(instanceID.ClassName);
-            return flatFile;
+            return converters;
         }
 
         /// <summary>

@@ -10,16 +10,9 @@
         /// コンストラクタ
         /// </summary>
         /// <param name="id">インスタンス化させたいクラスのID</param>
-        /// <param name="instanceIds">インスタンス化させたいクラス名の配列</param>
-        public InstanceGroupID(string id, InstanceID[] instanceIds)
+        public InstanceGroupID(string id)
             : base(id)
         {
-            this.InstanceIds = instanceIds;
         }
-
-        /// <summary>
-        /// プロパティ
-        /// </summary>
-        public InstanceID[] InstanceIds { get; }
     }
 }
