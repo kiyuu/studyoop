@@ -19,12 +19,11 @@
         /// <returns>インスタンス化したクラスが入った配列</returns>
         public static FlatFileToTsvConverterBase[] CreateInstances(InstanceGroupID instanceGroupID)
         {
-            var files = new FlatFileToTsvConverterBase[] { };
+            var files = new FlatFileToTsvConverterBase[instanceGroupID.InstanceIds.Length];
 
             int i = 0;
             foreach (var id in instanceGroupID.InstanceIds)
             {
-                Array.Resize(ref files, i + 1);
                 files[i] = CreateInstance(id);
                 i++;
             }
