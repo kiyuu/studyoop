@@ -24,6 +24,17 @@
             {
                 c.Excute();
             }
+
+            ////var converters = new List<Converter>()
+            ////{
+            ////      Factory.CreateInstance(InstanceIDs.EmployeeConverter),
+            ////      Factory.CreateInstance(InstanceIDs.ItemConverter),
+            ////};
+
+            ////foreach (var c in converters)
+            ////{
+            ////    c.Excute();
+            ////}
         }
     }
 }

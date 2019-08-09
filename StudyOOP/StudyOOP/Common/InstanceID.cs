@@ -7,18 +7,19 @@ using System.Threading.Tasks;
 namespace StudyOOP.Common
 {
     /// <summary>
-    /// InstanceIDクラス
+    /// InstanceID
     /// </summary>
-    public class InstanceID : IDBase
+    /// <typeparam name="T">id</typeparam>
+    public class InstanceID<T> : IDBase
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="InstanceID"/> class.
+        /// Initializes a new instance of the <see cref="InstanceID{T}"/> class.
         /// コンストラクタ
         /// </summary>
-        /// <param name="id">id</param>
+        /// <param name="id">ID</param>
         public InstanceID(string id)
             : base(id)
-        {           
-        }         
+        {
+        }
     }
 }

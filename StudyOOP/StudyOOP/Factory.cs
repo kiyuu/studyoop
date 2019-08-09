@@ -14,40 +14,51 @@ namespace StudyOOP
     public class Factory
     {
         /// <summary>
-        /// XMLを読み取ってインスタンス化して配列にするメソッド
+        /// XMLを読み取ってインスタンス化したものを配列にするメソッド
         /// </summary>
+        /// <typeparam name="T">CreateInstances</typeparam>
         /// <param name="instanceGroupID">instanceGroupID</param>
-        /// <returns>インスタンス化したものの配列</returns>
-        public static Converter[] CreateInstances(InstanceGroupID instanceGroupID)
-        {         
+        /// <returns>インスタンス化した配列</returns>
+        public static T[] CreateInstances<T>(InstanceGroupID<T> instanceGroupID)
+           where T : class
+        {
             var xmlDoc = new XmlDocument();
             xmlDoc.Load(@"instanceInfo.xml");
             var instance = xmlDoc.SelectNodes($"Extension/Group[@Id='{instanceGroupID.Id}']/Instance");
 
-            var converter = new List<Converter> { };
-            
-            foreach (XmlNode emp in instance)
+            var converter = new List<T> { };
+
+            foreach (XmlNode instances in instance)
             {
-                var className = emp.Attributes["ClassName"].InnerText;
-                var obj = CreateInstance(className);
-                Converter instanceClass = (Converter)obj;
-                converter.Add(instanceClass);
+                var className = instances.Attributes["ClassName"].InnerText;
+                var obj = CreateInstance<T>(className);
+                converter.Add(obj);
             }
 
-            Converter[] array = converter.ToArray();
+            T[] array = converter.ToArray();
             return array;
         }
 
         /// <summary>
-        /// 生成したオブジェクトをキャストするメソッド
+        /// XMLを読み取ってインスタンス化するメソッド
         /// </summary>
+        /// <typeparam name="T"> CreateInstance</typeparam>
         /// <param name="instanceID">instanceID</param>
         /// <returns>キャスト結果</returns>
-        public static Converter CreateInstance(InstanceID instanceID)
+        public static T CreateInstance<T>(InstanceID<T> instanceID)
+            where T : class
         {
-            var obj = CreateInstance(instanceID.Id);
-            Converter converter = (Converter)obj;
-            return converter;
+            var xmlDoc = new XmlDocument();
+            xmlDoc.Load(@"./instanceInfo.xml");
+            var instance = xmlDoc.SelectNodes($"Extension/Instance[@Id='{instanceID.Id}']");
+
+            if (instance.Count == 0)
+            {
+                throw new Exception("instanceId not found");
+            }
+
+            var className = instance.Item(0).Attributes["ClassName"].InnerText;
+            return CreateInstance<T>(className);
         }
 
         /// <summary>
@@ -55,11 +66,12 @@ namespace StudyOOP
         /// </summary>
         /// <param name="className">クラス名</param>
         /// <returns>生成したオブジェクト</returns>
-        private static object CreateInstance(string className)
+        private static T CreateInstance<T>(string className)
+            where T : class
         {
             Type typeInfo = Type.GetType(className);
             object obj = Activator.CreateInstance(typeInfo);
-            return obj;
+            return (T)obj;
         }
     }
 }

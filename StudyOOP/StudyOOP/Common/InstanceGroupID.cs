@@ -7,15 +7,16 @@ using System.Threading.Tasks;
 namespace StudyOOP.Common
 {
     /// <summary>
-    ///  InstanceGroupIDクラス
+    /// InstanceGroupID
     /// </summary>
-    public class InstanceGroupID : IDBase
+    /// <typeparam name="T">GroupID</typeparam>
+    public class InstanceGroupID<T> : IDBase
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="InstanceGroupID"/> class.
+        /// Initializes a new instance of the <see cref="InstanceGroupID{T}"/> class.
         /// コンストラクタ
         /// </summary>
-        /// <param name="id">id</param>
+        /// <param name="id">ID</param>
         public InstanceGroupID(string id)
            : base(id)
         {
