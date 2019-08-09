@@ -18,7 +18,7 @@ namespace StudyOOP
         private static readonly string OutputItemFileName = "Item";
 
         /// <summary>
-        /// 商品用ファイル(変換前)の文字列の長さを取得するプロパティ
+        /// 商品用ファイル(変換前)の文字列の長さを取得する
         /// </summary>
         protected override int InputLineLength
         {
@@ -29,7 +29,7 @@ namespace StudyOOP
         }
 
         /// <summary>
-        /// 商品用ファイル名(変換前)を取得するプロパティ
+        /// 商品用ファイル名(変換前)を取得する
         /// </summary>
         protected override string InputFileName
         {
@@ -40,12 +40,12 @@ namespace StudyOOP
         }
 
         /// <summary>
-        /// リストに各ファイル名とそれぞれの1行分の文字列を格納したクラスを入れて返すメソッド
+        /// リストに各ファイル名とそれぞれの1行分の文字列を格納したインスタンスを入れて返す
         /// </summary>
         /// <param name="inputLine">1行分の文字列(変換前)</param>
         /// <param name="functionType">各行の先頭の2文字</param>
         /// <param name="index">文字列を分解する時の開始点</param>
-        /// <returns>各ファイル名とそれぞれの1行分の文字列が入ったクラスのリスト</returns>
+        /// <returns>各ファイル名とそれぞれの1行分の文字列が入ったインスタンスのリスト</returns>
         protected override List<ConvertedRecordInfo> ConvertToTsv(string inputLine, string functionType, int index)
         {
             int length = 13;

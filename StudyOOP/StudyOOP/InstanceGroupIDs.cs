@@ -1,13 +1,14 @@
 ﻿namespace StudyOOP.Common
 {
     /// <summary>
-    /// InstanceID型のIDを渡してInstanceGroupID型の配列とそれに紐づくIDを持つクラス
+    /// InstanceGroupID型の配列に紐づくID
     /// </summary>
     public static class InstanceGroupIDs
     {
         /// <summary>
-        /// インスタンス化させたいクラスのIDが入った配列とそれに紐づくIDを持つクラスを取得するプロパティ
+        /// インスタンスが入った配列に紐づくIDを取得する
         /// </summary>
-        public static InstanceGroupID FlatFileToTsvConverters => new InstanceGroupID(nameof(FlatFileToTsvConverters));
+        public static InstanceGroupID<FlatFileToTsvConverterBase> FlatFileToTsvConverters =>
+            new InstanceGroupID<FlatFileToTsvConverterBase>(nameof(FlatFileToTsvConverters));
     }
 }

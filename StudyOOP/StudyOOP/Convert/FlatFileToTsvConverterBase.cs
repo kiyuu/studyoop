@@ -12,7 +12,7 @@
     public abstract class FlatFileToTsvConverterBase
     {
         /// <summary>
-        /// 子クラスで2回目から文字列を分解する時の開始点(1回目は共通)
+        /// 子クラスで文字列を分解する時の開始点
         /// </summary>
         protected static readonly int SecondIndex = 2;
 
@@ -21,17 +21,17 @@
         private static readonly string OutputFileNamePrefix = "delete_";
 
         /// <summary>
-        /// 従業員用ファイル(変換前)の文字列の長さを取得するプロパティ(抽象メソッド)
+        /// 従業員用ファイル(変換前)の文字列の長さを取得する
         /// </summary>
         protected abstract int InputLineLength { get; }
 
         /// <summary>
-        /// 従業員用ファイル名(変換前)を取得するプロパティ(抽象メソッド)
+        /// 従業員用ファイル名(変換前)を取得する
         /// </summary>
         protected abstract string InputFileName { get; }
 
         /// <summary>
-        /// 該当の.dat形式のファイルを.tsv形式に変換するメソッド
+        /// 該当の.dat形式のファイルを.tsv形式に変換する
         /// </summary>
         public void Execute()
         {
@@ -84,10 +84,10 @@
         }
 
         /// <summary>
-        /// ファイル名が正しいか確認するメソッド
+        /// ファイル名が正しいか確認する
         /// </summary>
         /// <param name="filePath">拡張子付きファイル名</param>
-        /// <returns>bool</returns>
+        /// <returns>読み込んだファイル名と子クラスで設定したファイル名、拡張子がともに等しければtrue</returns>
         protected virtual bool IsFileNameValid(string filePath)
         {
             if (!Path.GetExtension(filePath).Equals(Settings.InputExtension, StringComparison.OrdinalIgnoreCase))
@@ -108,7 +108,7 @@
         /// </summary>
         /// <param name="headerLine">ファイル内の最初の1行</param>
         /// <param name="fileName">ファイル名</param>
-        /// <returns>bool</returns>
+        /// <returns>ファイル名と等しければtrue</returns>
         protected virtual bool IsHeaderLineValid(string headerLine, string fileName)
         {
             if (headerLine == null)
@@ -128,7 +128,7 @@
         /// ファイルごとに文字数を比較して正しいかどうかを返すメソッド
         /// </summary>
         /// <param name="inputLineLength">ファイルの1行あたりの文字数</param>
-        /// <returns>bool</returns>
+        /// <returns>1行当たりの文字数が子クラスで設定した数値と等しければtrue</returns>
         protected virtual bool IsLengthValid(int inputLineLength)
         {
             if (inputLineLength != this.InputLineLength)
@@ -143,7 +143,7 @@
         /// 行の先頭から2文字を取得するメソッド
         /// </summary>
         /// <param name="inputLine">一行分の文字列</param>
-        /// <returns>functionType</returns>
+        /// <returns>行の先頭から2文字</returns>
         protected virtual string GetFunctionType(string inputLine)
         {
             var index = 0;
@@ -172,7 +172,7 @@
         }
 
         /// <summary>
-        /// リストに各ファイル名とそれぞれの1行分の文字列を格納したクラスを入れて返す抽象メソッド
+        /// リストに各ファイル名とそれぞれの1行分の文字列を格納したクラスを入れて返す
         /// </summary>
         /// <param name="inputLine">1行分の文字列(変換前)</param>
         /// <param name="functionType">各行の先頭の2文字</param>

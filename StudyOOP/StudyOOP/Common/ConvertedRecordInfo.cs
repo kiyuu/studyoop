@@ -7,7 +7,7 @@
     using System.Threading.Tasks;
 
     /// <summary>
-    /// 配列に格納して使う、2つのフィールドを戻り値として返すためのクラス
+    /// ファイル名と出力時の1行分の文字列を保持する
     /// </summary>
     public class ConvertedRecordInfo
     {
@@ -25,12 +25,12 @@
         }
 
         /// <summary>
-        /// ファイル名
+        /// ファイル名を取得する
         /// </summary>
         public string FileName { get; }
 
         /// <summary>
-        /// 出力時の1行分の文字列
+        /// 出力時の1行分の文字列を取得する
         /// </summary>
         public string OutputLine { get; }
     }

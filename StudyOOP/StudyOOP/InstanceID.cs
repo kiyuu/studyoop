@@ -1,12 +1,13 @@
 ﻿namespace StudyOOP.Common
 {
     /// <summary>
-    /// インスタンス化させたいクラスとそれに紐づくIDを持つクラス
+    /// インスタンス化させたいクラスに紐づくIDを持つクラス
     /// </summary>
-    public class InstanceID : IDBase
+    /// <typeparam name="T">インスタンスの型</typeparam>
+    public class InstanceID<T> : IDBase
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="InstanceID"/> class.
+        /// Initializes a new instance of the <see cref="InstanceID{T}"/> class.
         /// コンストラクタ
         /// </summary>
         /// <param name="id">ID</param>

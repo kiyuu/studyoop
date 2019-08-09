@@ -8,11 +8,13 @@
         /// <summary>
         /// 従業員用ファイルの情報が入ったクラスを指定して取得するプロパティ
         /// </summary>
-        public static InstanceID EmployeeConverter => new InstanceID(nameof(EmployeeConverter));
+        public static InstanceID<FlatFileToTsvConverterBase> EmployeeConverter =>
+            new InstanceID<FlatFileToTsvConverterBase>(nameof(EmployeeConverter));
 
         /// <summary>
         /// 商品用ファイルの情報が入ったクラスを指定して取得するプロパティ
         /// </summary>
-        public static InstanceID ItemConverter => new InstanceID(nameof(ItemConverter));
+        public static InstanceID<FlatFileToTsvConverterBase> ItemConverter =>
+            new InstanceID<FlatFileToTsvConverterBase>(nameof(ItemConverter));
     }
 }
